@@ -9,9 +9,10 @@ body {
   background: #f7f7f7;
 }
 .main-title {
-  font-size: 8rem;
+  font-size: 10rem;
   font-weight: bold;
   margin-bottom: 2rem;
+  line-height: 97%;
   text-align: center;
 }
 .input-container {
