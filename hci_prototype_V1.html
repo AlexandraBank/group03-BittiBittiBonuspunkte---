@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="burgerMenu.css">
 </head>
 <body>
-    <div class="burger"></div>
+    <div id="burger-menu-container"></div>
     <div class="flexbox screen"> 
         <div class="section"> 
             <div class="block questions"> </div>
@@ -31,5 +32,13 @@
     </div>
 
     
+        <script>
+        // Burger-Menü laden
+        fetch('burgerMenu.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('burger-menu-container').innerHTML = html;
+            });
+        </script>
 </body>
 </html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feedback Website</title>
+  <link rel="stylesheet" href="mainDisplay.css">
+</head>
+<body>
+  <div class="main-title">Feedback Website</div>
+  <form class="input-container">
+    <input type="text" placeholder="Name der Veranstaltung eingeben" required />
+    <div class="button-row">
+      <button type="button" class="create">Erstellen</button>
+      <button type="button" class="join">Beitreten</button>
+    </div>
+  </form>
+  <script>
+    document.querySelector('.create').onclick = function() {
+      window.location.href = 'mainDisplay.html';
+    };
+    document.querySelector('.join').onclick = function() {
+      window.location.href = 'mainDisplay.html';
+    };
+  </script>
+</body>
+</html>
