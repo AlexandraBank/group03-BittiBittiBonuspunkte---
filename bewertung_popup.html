@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bewertung Popup</title>
+    <meta name="robots" content="noindex">
+    <script>
+      (function () {
+        var target = 'bewertungtool.html?popup=1';
+        try {
+          window.location.replace(target);
+        } catch (e) {
+          window.location.href = target;
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <noscript>
+      <p>Dieses Fenster wird weitergeleitet. Falls nichts passiert, <a href="bewertungtool.html?popup=1">hier klicken</a>.</p>
+    </noscript>
+  </body>
+</html>

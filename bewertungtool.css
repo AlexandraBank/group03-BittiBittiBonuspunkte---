@@ -1,0 +1,253 @@
+.popup-overlay {
+  display: none; 
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); 
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.26);
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px; right: 10px;
+  cursor: pointer;
+  font-size: 22px;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  height: 1px; width: 1px;
+  overflow: hidden; clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+}
+
+#ratingText {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px;
+  margin: 8px 0 12px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.btn {
+  padding: 8px 10px;
+  border: 1px solid #888;
+  background: #f5f5f5;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn.primary {
+  background: #2b6cb0;
+  color: white;
+  border-color: #245a96;
+}
+
+.dropdown {
+  position: relative;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  background: white;
+  min-width: 260px;
+  max-width: 360px;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  border-radius: 6px;
+  padding: 8px;
+  display: none;
+  z-index: 2000;
+  gap: 6px;
+}
+
+.suggestion-item {
+  padding: 8px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #222;
+}
+
+.suggestion-item:hover,
+.suggestion-item:focus {
+  background: #f7fbff;
+  outline: none;
+}
+
+.chevron {
+  margin-left: 8px;
+  font-size: 12px;
+}
+
+.btn.small {
+  padding: 6px 8px;
+  font-size: 13px;
+}
+
+.dropdown-footer {
+  border-top: 1px solid #eee;
+  margin-top: 8px;
+  padding-top: 8px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.manage-panel {
+  margin-top: 8px;
+  display: none;
+  gap: 6px;
+}
+
+.manage-panel[aria-hidden="false"] {
+  display: block;
+}
+
+#newSuggestionInput {
+  width: calc(100% - 110px);
+  padding: 6px 8px;
+  margin-right: 6px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.manage-list {
+  list-style: none;
+  padding: 6px 0 0 0;
+  margin: 6px 0 0 0;
+  max-height: 160px;
+  overflow: auto;
+  border-top: 1px dashed #f0f0f0;
+}
+
+.manage-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  font-size: 14px;
+  border-radius: 4px;
+}
+
+.manage-list li + li { margin-top: 6px; }
+
+.manage-list .del-btn {
+  background: transparent;
+  border: none;
+  color: #c0392b;
+  cursor: pointer;
+  padding: 4px 6px;
+}
+
+
+.polls {
+  margin: 18px 0;
+}
+
+.poll {
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  max-width: 700px;
+}
+
+.poll { position: relative; }
+
+.poll-question {
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.poll-bars {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  margin-bottom: 10px;
+}
+
+.poll-bar {
+  flex: 1 1 0;
+  height: 28px;
+  border-radius: 6px;
+  background: #f0f0f0;
+  position: relative;
+  overflow: hidden;
+}
+
+.poll-bar-fill {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 0%;
+  transition: width 300ms ease;
+}
+
+.poll-bar-label {
+  position: absolute;
+  left: 8px; top: 6px;
+  font-size: 13px;
+  color: #fff;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.2);
+}
+
+.poll-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.btn.vote {
+  padding: 6px 10px;
+  font-size: 14px;
+}
+
+.bar-yes .poll-bar-fill { background: linear-gradient(90deg,#2ecc71,#27ae60); }
+.bar-no .poll-bar-fill { background: linear-gradient(90deg,#e74c3c,#c0392b); }
+
+.poll-stats { font-size: 13px; color: #444; margin-left: 6px; }
+
+.poll-del {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 10;
+}
+.poll-del button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #888;
+  padding: 6px;
+  border-radius: 6px;
+}
+.poll-del button:hover { color: #c0392b; background: rgba(192,57,43,0.06); }
+
+.poll-controls .poll-del {
+  position: static;
+  margin-left: auto;
+  align-self: flex-start;
+}
