@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box;
+}
+
 .burger {
     width: 75px;
     height: 75px;
@@ -104,3 +108,63 @@
 .participant svg { display:block; width:28px; height:28px; }
 .participant svg path { fill: #fff !important; }
 .participant #participantCount { font-weight: 700; color: #fff; font-size: 18px; }
+
+
+.questions {
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.question-card {
+    background-color: rgb(230, 230, 230);
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 12px;
+}
+
+.question-meta {
+    font-size: 12px;
+    color: rgb(90, 90, 90);
+    margin: 0;
+}
+
+.question-text {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 5px 0;
+}
+
+.question-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.question-actions button {
+    background-color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    cursor: pointer;
+}
+
+.question-actions button:hover {
+    background-color: rgb(210, 210, 210);
+}
+
+
+
+.input-question {
+    width: 100%;
+    height: 50px;
+    font-size: 15px;
+}
+
+.input-submit {
+    margin-top: 10px;
+    width: 100%;
+    height: 50px;
+    background-color: blue;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+}
