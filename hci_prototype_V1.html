@@ -19,24 +19,7 @@
                 <div>
                 <h1>Fragen</h1>
 
-                <div class="question-card">
-                    <p class="question-meta">Ein Student fragt:</p>
-                    <p class="question-text">Was sind Metaphern?</p>
-                    <div class="question-actions">
-                        <button class="upvote" data-votes="3">⬆ <span>3</span></button>
-                        <button class="downvote">⬇</button>
-                    </div>
 
-                </div>
-
-                <div class="question-card">
-                    <p class="question-meta">Ein Student fragt:</p>
-                    <p class="question-text">Was sind Metaphern?</p>
-                    <div class="question-actions">
-                        <button class="upvote" data-votes="3">⬆ <span>3</span></button>
-                        <button class="downvote">⬇</button>
-                    </div>
-                </div>
 
                 <div class="question-card">
                     <p class="question-meta">Ein Student fragt:</p>
@@ -49,10 +32,11 @@
                 </div>
 
                 <div>
-                    <input type="text" class="input-question" placeholder="Stelle eine Frage..."> 
-                    <button class= "input-submit"> 
+                    <input type="text" id="questionInput" class="input-question" placeholder="Stelle eine Frage..."> 
+                    <button id="submitQuestion" class="input-submit">
                         Frage abschicken
                     </button>
+
 
                 </div>
 
@@ -183,4 +167,44 @@ document.addEventListener("click", function (e) {
     }
 
 });
+
+
+document.getElementById("submitQuestion").addEventListener("click", addQuestion);
+
+document.getElementById("questionInput").addEventListener("keypress", function (e) {
+    if (e.key === "Enter") {
+        addQuestion();
+    }
+});
+
+function addQuestion() {
+    const input = document.getElementById("questionInput");
+    const text = input.value.trim();
+
+    if (text === "") return;
+
+    const questionsContainer = document.querySelector(".questions > div");
+
+    const card = document.createElement("div");
+    card.className = "question-card";
+
+    card.innerHTML = `
+        <p class="question-meta">Ein Student fragt:</p>
+        <p class="question-text">${text}</p>
+        <div class="question-actions">
+            <button class="upvote" data-votes="0">⬆ <span>0</span></button>
+            <button class="downvote">⬇</button>
+        </div>
+    `;
+
+    questionsContainer.appendChild(card);
+
+    questionsContainer.parentElement.scrollTop =
+    questionsContainer.parentElement.scrollHeight;
+
+
+    input.value = "";
+}
+
+
 </script>
