@@ -80,13 +80,36 @@ document.addEventListener('DOMContentLoaded', function () {
 		} catch (e) { console.warn('Konnte polls nicht speichern', e); }
 	}
 
+	function createPollBar(className, emoji, count, pct) {
+		const wrap = document.createElement('div');
+		wrap.className = 'poll-bar ' + className;
+		const fill = document.createElement('div');
+		fill.className = 'poll-bar-fill';
+		fill.style.width = pct + '%';
+		const label = document.createElement('div');
+		label.className = 'poll-bar-label';
+		label.textContent = emoji + ' ' + count + ' (' + pct + '%)';
+		wrap.appendChild(fill);
+		wrap.appendChild(label);
+		return wrap;
+	}
+
+	function createVoteButton(emoji, title, onClick) {
+		const btn = document.createElement('button');
+		btn.className = 'btn vote';
+		btn.title = title;
+		btn.textContent = emoji;
+		btn.addEventListener('click', onClick);
+		return btn;
+	}
+
 	function renderPolls() {
 		const container = document.getElementById('polls');
 		if (!container) return;
 		container.innerHTML = '';
 		if (!polls.length) {
 			const p = document.createElement('p');
-			p.textContent = 'Keine Fragen zum Bewerten vorhanden. Erstelle eine neue Frage bei der die Studenten mit ja/nein abstmmen können.';
+			p.textContent = 'Keine Fragen zum Bewerten vorhanden. Erstelle eine neue Frage, bei der die Studierenden positiv/neutral/negativ abstimmen können.';
 			container.appendChild(p);
 			return;
 		}
@@ -102,35 +125,23 @@ document.addEventListener('DOMContentLoaded', function () {
 			const bars = document.createElement('div');
 			bars.className = 'poll-bars';
 
-			const total = (poll.yes || 0) + (poll.no || 0) || 0;
-			const yesPct = total === 0 ? 50 : Math.round(((poll.yes || 0) / total) * 100);
-			const noPct = total === 0 ? 50 : 100 - yesPct;
+			const yes = poll.yes || 0;
+			const no = poll.no || 0;
+			const neutral = poll.neutral || 0;
+			const total = yes + no + neutral;
+			let yesPct, noPct, neutralPct;
+			if (total === 0) {
+				yesPct = 33; neutralPct = 33; noPct = 34;
+			} else {
+				yesPct = Math.round((yes / total) * 100);
+				neutralPct = Math.round((neutral / total) * 100);
+				noPct = 100 - yesPct - neutralPct;
+			}
 
-			//Abstimmung ja
-			const yesWrap = document.createElement('div');
-			yesWrap.className = 'poll-bar bar-yes';
-			const yesFill = document.createElement('div');
-			yesFill.className = 'poll-bar-fill';
-			yesFill.style.width = yesPct + '%';
-			const yesLabel = document.createElement('div');
-			yesLabel.className = 'poll-bar-label';
-			yesLabel.textContent = 'Ja ' + (poll.yes || 0) + ' (' + yesPct + '%)';
-			yesWrap.appendChild(yesFill);
-			yesWrap.appendChild(yesLabel);
-			bars.appendChild(yesWrap);
-
-			//Abstimmung nein
-			const noWrap = document.createElement('div');
-			noWrap.className = 'poll-bar bar-no';
-			const noFill = document.createElement('div');
-			noFill.className = 'poll-bar-fill';
-			noFill.style.width = noPct + '%';
-			const noLabel = document.createElement('div');
-			noLabel.className = 'poll-bar-label';
-			noLabel.textContent = 'Nein ' + (poll.no || 0) + ' (' + noPct + '%)';
-			noWrap.appendChild(noFill);
-			noWrap.appendChild(noLabel);
-			bars.appendChild(noWrap);
+			//Abbstimmmöglichkeiten: positive, neutral, negative
+			bars.appendChild(createPollBar('bar-yes', '😊', yes, yesPct));
+			bars.appendChild(createPollBar('bar-neutral', '😐', neutral, neutralPct));
+			bars.appendChild(createPollBar('bar-no', '☹️', no, noPct));
 
 			box.appendChild(bars);
 
@@ -138,16 +149,9 @@ document.addEventListener('DOMContentLoaded', function () {
 			//Abstimmungs-Buttons und Statistik
 			const controls = document.createElement('div');
 			controls.className = 'poll-controls';
-			const yesBtn = document.createElement('button');
-			yesBtn.className = 'btn vote';
-			yesBtn.textContent = 'Ja';
-			yesBtn.addEventListener('click', function () { votePoll(poll.id, 'yes'); });
-			const noBtn = document.createElement('button');
-			noBtn.className = 'btn vote';
-			noBtn.textContent = 'Nein';
-			noBtn.addEventListener('click', function () { votePoll(poll.id, 'no'); });
-			controls.appendChild(yesBtn);
-			controls.appendChild(noBtn);
+			controls.appendChild(createVoteButton('😊', 'Stimme: positiv', function () { votePoll(poll.id, 'yes'); }));
+			controls.appendChild(createVoteButton('😐', 'Stimme: neutral', function () { votePoll(poll.id, 'neutral'); }));
+			controls.appendChild(createVoteButton('☹️', 'Stimme: negativ', function () { votePoll(poll.id, 'no'); }));
 			const stats = document.createElement('div');
 			stats.className = 'poll-stats';
 			stats.textContent = 'Stimmen: ' + total;
@@ -176,7 +180,8 @@ document.addEventListener('DOMContentLoaded', function () {
 		const p = polls.find(function (x) { return x.id === id; });
 		if (!p) return;
 		if (choice === 'yes') p.yes = (p.yes || 0) + 1;
-		else p.no = (p.no || 0) + 1;
+		else if (choice === 'no') p.no = (p.no || 0) + 1;
+		else if (choice === 'neutral') p.neutral = (p.neutral || 0) + 1;
 		savePolls();
 		renderPolls();
 	}
@@ -271,9 +276,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		function toggleManagePanel() {
 			if (!managePanel) return;
 			const isHidden = managePanel.getAttribute('aria-hidden') === 'true';
-			// toggle
 			managePanel.setAttribute('aria-hidden', isHidden ? 'false' : 'true');
-			// always refresh the list; when panel becomes visible, focus input
 			renderManageList();
 			if (isHidden) newSuggestionInput && newSuggestionInput.focus();
 		}
@@ -311,7 +314,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			return;
 		}
 		const id = 'poll_' + Date.now();
-		const poll = { id: id, text: value, yes: 0, no: 0, createdAt: Date.now() };
+		const poll = { id: id, text: value, yes: 0, no: 0, neutral: 0, createdAt: Date.now() };
 		polls.unshift(poll);
 		savePolls();
 		renderPolls();
