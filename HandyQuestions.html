@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Räume</title>
+    <link rel="stylesheet" href="HandyQuestions.css">
+    <link rel="stylesheet" href="Handyleiste.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Fragen</title>
+</head>
+<body>
+    <div class="bottom-nav">
+		<button id="fragen" class="active">Fragen</button>
+		<button id="home" onclick="window.location.href='HandyHome.html'">Home</button>
+		<button id="raeume" onclick="window.location.href='HandyRäume.html'">Räume</button>
+	</div>
+    <div class="questions-container">
+    <h1>Fragen</h1>
+    <div class="questions-list">
+        <div class="question-card">
+            <p class="question-meta">Ein Student fragt:</p>
+            <p class="question-text">Was sind Metaphern?</p>
+            <div class="question-actions">
+                <button class="upvote" data-votes="3">⬆ <span>3</span></button>
+                <button class="downvote">⬇</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="question-input-area">
+        <input type="text" id="questionInput" class="input-question" placeholder="Stelle eine Frage...">
+        <button id="submitQuestion" class="input-submit">Frage abschicken</button>
+    </div>
+</div>
+    
+</body>
+</html>
+
+<script>
+document.addEventListener("click", function (e) {
+    if (e.target.closest(".upvote")) {
+        const btn = e.target.closest(".upvote");
+        let votes = parseInt(btn.dataset.votes, 10);
+        votes++;
+        btn.dataset.votes = votes;
+        btn.querySelector("span").textContent = votes;
+    }
+
+    if (e.target.closest(".downvote")) {
+        const downBtn = e.target.closest(".downvote");
+        const upBtn = downBtn.parentElement.querySelector(".upvote");
+        let votes = parseInt(upBtn.dataset.votes, 10);
+        votes--;
+        upBtn.dataset.votes = votes;
+        upBtn.querySelector("span").textContent = votes;
+    }
+});
+
+document.getElementById("submitQuestion").addEventListener("click", addQuestion);
+document.getElementById("questionInput").addEventListener("keypress", function (e) {
+    if (e.key === "Enter") addQuestion();
+});
+
+function addQuestion() {
+    const input = document.getElementById("questionInput");
+    const text = input.value.trim();
+    if (text === "") return;
+
+    const questionsContainer = document.querySelector(".questions-list");
+    const card = document.createElement("div");
+    card.className = "question-card";
+    card.innerHTML = `
+        <p class="question-meta">Ein Student fragt:</p>
+        <p class="question-text">${text}</p>
+        <div class="question-actions">
+            <button class="upvote" data-votes="0">⬆ <span>0</span></button>
+            <button class="downvote">⬇</button>
+        </div>
+    `;
+    questionsContainer.appendChild(card);
+    input.value = "";
+}
+</script>
