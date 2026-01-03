@@ -179,11 +179,54 @@ document.addEventListener('DOMContentLoaded', function () {
 	function votePoll(id, choice) {
 		const p = polls.find(function (x) { return x.id === id; });
 		if (!p) return;
+		// compute previous positive percentage to detect crossing the 50% threshold
+		var prevYes = p.yes || 0;
+		var prevNeutral = p.neutral || 0;
+		var prevNo = p.no || 0;
+		var prevTotal = prevYes + prevNeutral + prevNo;
+		var prevYesPct = prevTotal === 0 ? 0 : (prevYes / prevTotal) * 100;
+
 		if (choice === 'yes') p.yes = (p.yes || 0) + 1;
 		else if (choice === 'no') p.no = (p.no || 0) + 1;
 		else if (choice === 'neutral') p.neutral = (p.neutral || 0) + 1;
+
 		savePolls();
 		renderPolls();
+
+		// after voting, check new percentage and show hamster if crossed >50%
+		var newYes = p.yes || 0;
+		var newNeutral = p.neutral || 0;
+		var newNo = p.no || 0;
+		var newTotal = newYes + newNeutral + newNo;
+		var newYesPct = newTotal === 0 ? 0 : (newYes / newTotal) * 100;
+
+		try {
+			if (prevYesPct <= 50 && newYesPct > 50) {
+				showHamster();
+			}
+		} catch (e) { }
+	}
+
+
+	function showHamster() {
+		if (document.getElementById('hamsterOverlay')) return;
+		var overlay = document.createElement('div');
+		overlay.id = 'hamsterOverlay';
+		overlay.className = 'hamster-overlay';
+		var img = document.createElement('img');
+		img.src = 'BittiHamster.jpg';
+		img.alt = 'Bitti Hamster';
+		img.className = 'hamster-image';
+
+
+		img.addEventListener('error', function () {
+			overlay.innerHTML = '<div class="hamster-emoji">🐹</div>';
+			setTimeout(function () { try { overlay.remove(); } catch (e) {} }, 3000);
+		});
+
+		overlay.appendChild(img);
+		document.body.appendChild(overlay);
+		setTimeout(function () { try { overlay.remove(); } catch (e) {} }, 3000);
 	}
 
 	window.openPopup = function () {
