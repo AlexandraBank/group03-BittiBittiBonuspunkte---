@@ -1,3 +1,7 @@
+* {
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+
 .popup-overlay {
   display: none; 
   position: fixed;
