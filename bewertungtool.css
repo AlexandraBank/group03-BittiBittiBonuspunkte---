@@ -1,3 +1,7 @@
+* {
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+
 .popup-overlay {
   display: none; 
   position: fixed;
@@ -226,8 +230,30 @@
 
 .bar-yes .poll-bar-fill { background: linear-gradient(90deg,#2ecc71,#27ae60); }
 .bar-no .poll-bar-fill { background: linear-gradient(90deg,#e74c3c,#c0392b); }
-/* neutral bar (yellow/orange) */
 .bar-neutral .poll-bar-fill { background: linear-gradient(90deg,#f1c40f,#f39c12); }
+
+
+.hamster-overlay {
+  position: fixed;
+  left: 0; top: 0; right: 0; bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.5);
+  z-index: 10000;
+}
+.hamster-overlay .hamster-image {
+  max-width: 60vw;
+  max-height: 60vh;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+}
+.hamster-overlay .hamster-emoji {
+  font-size: 72px;
+  background: rgba(255,255,255,0.9);
+  padding: 18px;
+  border-radius: 12px;
+}
 
 .poll-stats { font-size: 13px; color: #444; margin-left: 6px; }
 
