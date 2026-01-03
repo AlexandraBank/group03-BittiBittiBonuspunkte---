@@ -6,6 +6,10 @@
     <title>Document</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="burgerMenu.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
 </head>
 <body>
     <div id="burger-menu-container"></div>
@@ -19,8 +23,18 @@
                     <p class="question-meta">Ein Student fragt:</p>
                     <p class="question-text">Was sind Metaphern?</p>
                     <div class="question-actions">
-                        <button>⬆ 3</button>
-                        <button>⬇</button>
+                        <button class="upvote" data-votes="3">⬆ <span>3</span></button>
+                        <button class="downvote">⬇</button>
+                    </div>
+
+                </div>
+
+                <div class="question-card">
+                    <p class="question-meta">Ein Student fragt:</p>
+                    <p class="question-text">Was sind Metaphern?</p>
+                    <div class="question-actions">
+                        <button class="upvote" data-votes="3">⬆ <span>3</span></button>
+                        <button class="downvote">⬇</button>
                     </div>
                 </div>
 
@@ -28,17 +42,8 @@
                     <p class="question-meta">Ein Student fragt:</p>
                     <p class="question-text">Was sind Metaphern?</p>
                     <div class="question-actions">
-                        <button>⬆ 3</button>
-                        <button>⬇</button>
-                    </div>
-                </div>
-
-                <div class="question-card">
-                    <p class="question-meta">Ein Student fragt:</p>
-                    <p class="question-text">Was sind Metaphern?</p>
-                    <div class="question-actions">
-                        <button>⬆ 3</button>
-                        <button>⬇</button>
+                        <button class="upvote" data-votes="3">⬆ <span>3</span></button>
+                        <button class="downvote">⬇</button>
                     </div>
                 </div>
                 </div>
@@ -151,3 +156,31 @@
         </script>
 </body>
 </html>
+
+<script>
+document.addEventListener("click", function (e) {
+
+    // UPVOTE
+    if (e.target.closest(".upvote")) {
+        const btn = e.target.closest(".upvote");
+        let votes = parseInt(btn.dataset.votes, 10);
+
+        votes++;
+        btn.dataset.votes = votes;
+        btn.querySelector("span").textContent = votes;
+    }
+
+    // DOWNVOTE
+    if (e.target.closest(".downvote")) {
+        const downBtn = e.target.closest(".downvote");
+        const upBtn = downBtn.parentElement.querySelector(".upvote");
+
+        let votes = parseInt(upBtn.dataset.votes, 10);
+
+            votes--;
+            upBtn.dataset.votes = votes;
+            upBtn.querySelector("span").textContent = votes;
+    }
+
+});
+</script>
