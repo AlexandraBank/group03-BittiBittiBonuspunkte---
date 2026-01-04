@@ -64,3 +64,32 @@
     flex-direction: column;
     gap: 1px;
 }
+
+.answer-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.answer-input {
+    flex: 1;
+}
+
+.remove-answer {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.survey-list .poll-bar-label {
+    color: #000;
+    font-weight: 600;
+    text-shadow: none;
+}
+
+.survey-list .poll-bar-fill {
+    opacity: 0.85;
+}
+
+
