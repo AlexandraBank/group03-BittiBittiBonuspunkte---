@@ -54,3 +54,13 @@
     font-size: 20px;
     cursor: pointer;
 }
+
+#surveyOverlay.popup-overlay {
+    display: flex !important;
+}
+
+.survey-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
