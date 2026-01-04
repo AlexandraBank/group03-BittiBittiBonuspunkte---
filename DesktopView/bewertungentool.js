@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		overlay.id = 'hamsterOverlay';
 		overlay.className = 'hamster-overlay';
 		var img = document.createElement('img');
-		img.src = 'BittiHamster.jpg';
+		img.src = '../pictures/BittiHamster.jpg';
 		img.alt = 'Bitti Hamster';
 		img.className = 'hamster-image';
 
