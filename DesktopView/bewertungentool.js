@@ -149,9 +149,6 @@ document.addEventListener('DOMContentLoaded', function () {
 			//Abstimmungs-Buttons und Statistik
 			const controls = document.createElement('div');
 			controls.className = 'poll-controls';
-			controls.appendChild(createVoteButton('😊', 'Stimme: positiv', function () { votePoll(poll.id, 'yes'); }));
-			controls.appendChild(createVoteButton('😐', 'Stimme: neutral', function () { votePoll(poll.id, 'neutral'); }));
-			controls.appendChild(createVoteButton('☹️', 'Stimme: negativ', function () { votePoll(poll.id, 'no'); }));
 			const stats = document.createElement('div');
 			stats.className = 'poll-stats';
 			stats.textContent = 'Stimmen: ' + total;
