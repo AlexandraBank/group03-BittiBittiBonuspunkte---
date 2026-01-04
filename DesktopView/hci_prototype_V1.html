@@ -6,9 +6,11 @@
     <title>Home</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="burgerMenu.css">
+    <link rel="stylesheet" href="Umfrage.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="Umfrage.js" defer></script>
 
 </head>
 <body>
@@ -72,6 +74,8 @@
                     </div>
                     <div class="button button--fill"> 
                         <button id="openBewertungBtn" class="btn">Bewertung erstellen</button>
+                        <div class="button button--fill"> 
+                        <button id="openSurveyBtn" class="btn">Umfrage erstellen</button>
                     </div>
 
                     <div class="button"> </div>
@@ -79,6 +83,8 @@
             </div>
         </div>
     </div>
+
+    <div id="surveyContainer"></div>
 
     
         <script>
@@ -138,6 +144,7 @@
         }
         window.setParticipantCount = setParticipantCount;
         </script>
+        <script src="Umfrage.js" defer></script>
 </body>
 </html>
 
