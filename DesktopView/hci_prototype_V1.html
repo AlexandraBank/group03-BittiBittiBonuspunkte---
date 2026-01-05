@@ -12,7 +12,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="Umfrage.js" defer></script>
-
 </head>
 <body>
     <div id="burger-menu-container"></div>
@@ -20,47 +19,29 @@
         <div class="section"> 
             <div class="block questions">
                 <div>
-                <h1>Fragen</h1>
-
-
-
-                <div class="question-card">
-                    <p class="question-meta">Ein Student fragt:</p>
-                    <p class="question-text">Was sind Metaphern?</p>
-                    <div class="question-actions">
-                        <button class="upvote" data-votes="3">⬆ <span>3</span></button>
-                        <button class="downvote">⬇</button>
-                    </div>
+                    <h1>Fragen</h1>
+                    <!-- Liste der Fragen wird hier gerendert -->
+                    <div id="questionsList"></div>
                 </div>
-                </div>
-
-                <div>
-                    <input type="text" id="questionInput" class="input-question" placeholder="Stelle eine Frage..."> 
-                    <button id="submitQuestion" class="input-submit">
-                        Frage abschicken
-                    </button>
-
-
-                </div>
-
-
-        
+            </div>
         </div>
-        </div>
+
         <div class="section"> 
             <div class="block"> 
                 <iframe src="bewertungtool.html" style="width:100%;height:100%;border:0;" title="Bewertungstool"></iframe>
             </div>
             <div class="block"> </div>
         </div>
+
         <div class="section sidebar"> 
             <div class="flexbox verticalFlex">
                 <div class="block qrCode">
                     <div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-start;height:auto;font-size:16px;color:#333;padding-top:10px;">
-                            <div style="margin-bottom:8px;">Scan mich zum Beitreten</div>
-                    <img src="../pictures/QR.png" alt="AR" id="arImage" style="max-width:100%;height:auto;display:block;margin:0 auto;" />
+                        <div style="margin-bottom:8px;">Scan mich zum Beitreten</div>
+                        <img src="../pictures/QR.png" alt="AR" id="arImage" style="max-width:100%;height:auto;display:block;margin:0 auto;" />
                     </div>
                 </div>
+
                 <div>
                     <div class="members">
                         <div class="participant">
@@ -71,15 +52,14 @@
                             <span id="participantCount">1</span>
                         </div>
                     </div>
-                        
-                    </div>
-                    <div class="button button--fill">
-                        <button id="openBewertungBtn">Bewertung erstellen</button>
-                    </div>
+                </div>
 
-                    <div class="button button--fill">
-                        <button id="openSurveyBtn">Umfrage erstellen</button>
-                    </div>
+                <div class="button button--fill">
+                    <button id="openBewertungBtn">Bewertung erstellen</button>
+                </div>
+
+                <div class="button button--fill">
+                    <button id="openSurveyBtn">Umfrage erstellen</button>
                 </div>
             </div>
         </div>
@@ -87,46 +67,214 @@
 
     <div id="surveyContainer"></div>
 
-    
-        <script>
-        // Burger-Menü laden
-        fetch('burgerMenu.html')
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById('burger-menu-container').innerHTML = html;
-            });
-
-
-        //Öffnen des Bewertungspopups
-        (function () {
-            function openInIframe() {
-                try {
-                    var w = 720, h = 560;
-                    var dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : screen.left;
-                    var dualScreenTop = window.screenTop !== undefined ? window.screenTop : screen.top;
-                    var width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
-                    var height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
-                    var left = ((width / 2) - (w / 2)) + dualScreenLeft;
-                    var top = ((height / 2) - (h / 2)) + dualScreenTop;
-                    var features = 'scrollbars=yes,resizable=yes,toolbar=no,location=no,status=no,menubar=no,width=' + w + ',height=' + h + ',top=' + top + ',left=' + left;
-                    var popup = window.open('bewertung_popup.html', 'bewertungPopup', features);
-                    if (popup && popup.focus) popup.focus();
-                    if (!popup) {
-                        try { window.open('bewertung_popup.html', '_blank'); } catch (e) { window.location.href = 'bewertung_popup.html'; }
-                    }
-                } catch (err) {
-                    console.warn('Konnte Popup-Fenster nicht öffnen, navigiere zur Popup-Seite:', err);
-                    try { window.open('bewertung_popup.html', '_blank'); } catch (e) { window.location.href = 'bewertung_popup.html'; }
-                }
+    <script>
+    (function () {
+        // --- Burger menu load (optional) ---
+        try {
+            const bm = document.getElementById('burger-menu-container');
+            if (bm) {
+                fetch('burgerMenu.html').then(r => r.text()).then(html => { bm.innerHTML = html; }).catch(()=>{});
             }
+        } catch (e) {}
 
-            var btn = document.getElementById('openBewertungBtn');
+        // --- Questions module ---
+        const STORAGE_KEY = 'hci_questions_v1';
+        const questionsListEl = document.getElementById('questionsList');
+        const inputEl = document.getElementById('questionInput'); // may be absent
+        const submitBtn = document.getElementById('submitQuestion'); // may be absent
+
+        function loadQuestions() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                return raw ? JSON.parse(raw) : [];
+            } catch (e) {
+                console.warn('Fehler beim Laden der Fragen:', e);
+                return [];
+            }
+        }
+
+        function saveQuestions(list) {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+            } catch (e) {
+                console.warn('Fehler beim Speichern der Fragen:', e);
+            }
+        }
+
+        function seedIfEmpty() {
+            const q = loadQuestions();
+            if (!q || q.length === 0) {
+                const sample = [{ id: (Date.now().toString(36) + Math.random().toString(36).slice(2,8)), text: 'Was sind Metaphern?', votes: 3, created: Date.now() }];
+                saveQuestions(sample);
+            }
+        }
+
+        function createCardElement(q) {
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            card.dataset.id = q.id;
+
+            const meta = document.createElement('p');
+            meta.className = 'question-meta';
+            meta.textContent = 'Ein Student fragt:';
+            card.appendChild(meta);
+
+            const txt = document.createElement('p');
+            txt.className = 'question-text';
+            txt.textContent = q.text;
+            card.appendChild(txt);
+
+            const actions = document.createElement('div');
+            actions.className = 'question-actions';
+
+            const upBtn = document.createElement('button');
+            upBtn.className = 'upvote';
+            upBtn.dataset.id = q.id;
+            upBtn.dataset.votes = (q.votes || 0);
+            upBtn.innerHTML = '⬆ <span>' + (q.votes || 0) + '</span>';
+
+            const downBtn = document.createElement('button');
+            downBtn.className = 'downvote';
+            downBtn.dataset.id = q.id;
+            downBtn.textContent = '⬇';
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete';
+            deleteBtn.dataset.id = q.id;
+            deleteBtn.textContent = 'Löschen';
+
+            actions.appendChild(upBtn);
+            actions.appendChild(downBtn);
+            actions.appendChild(deleteBtn);
+            card.appendChild(actions);
+
+            return card;
+        }
+
+        function renderQuestions() {
+            const questions = loadQuestions();
+            if (!questionsListEl) return;
+            questionsListEl.innerHTML = '';
+            questions.sort((a,b) => (b.votes||0) - (a.votes||0) || (a.created||0) - (b.created||0));
+            questions.forEach(q => {
+                const card = createCardElement(q);
+                questionsListEl.appendChild(card);
+            });
+            const parent = questionsListEl.parentElement;
+            if (parent) parent.scrollTop = parent.scrollHeight;
+        }
+
+        function addQuestionText(text) {
+            if (!text || !text.trim()) return;
+            const questions = loadQuestions();
+            const item = { id: Date.now().toString(36) + Math.random().toString(36).slice(2,8), text: text.trim(), votes: 0, created: Date.now() };
+            questions.push(item);
+            saveQuestions(questions);
+            renderQuestions();
+        }
+
+        function updateVotes(id, delta) {
+            const questions = loadQuestions();
+            const idx = questions.findIndex(q => q.id === id);
+            if (idx === -1) return;
+            questions[idx].votes = (questions[idx].votes || 0) + delta;
+            saveQuestions(questions);
+            renderQuestions();
+        }
+
+        function deleteQuestion(id) {
+            if (!id) return;
+            let questions = loadQuestions();
+            const idx = questions.findIndex(q => q.id === id);
+            if (idx === -1) return;
+            questions.splice(idx, 1);
+            saveQuestions(questions);
+            renderQuestions();
+        }
+
+        window.Questions = {
+            getAll: () => loadQuestions(),
+            add: (text) => addQuestionText(text),
+            updateVotes: (id, delta) => updateVotes(id, delta),
+            remove: (id) => deleteQuestion(id),
+            STORAGE_KEY
+        };
+
+        // Event delegation for votes and delete
+        document.addEventListener('click', function (e) {
+            const up = e.target.closest('.upvote');
+            const down = e.target.closest('.downvote');
+            const del = e.target.closest('.delete');
+
+            if (up) {
+                const id = up.dataset.id;
+                updateVotes(id, +1);
+            } else if (down) {
+                const id = down.dataset.id;
+                updateVotes(id, -1);
+            } else if (del) {
+                const id = del.dataset.id;
+                deleteQuestion(id);
+            }
+        });
+
+        // Submit handlers (guarded in case inputs don't exist)
+        if (submitBtn) submitBtn.addEventListener('click', function (ev) {
+            ev.preventDefault();
+            if (!inputEl) return;
+            const text = inputEl.value;
+            if (!text || !text.trim()) return;
+            addQuestionText(text);
+            inputEl.value = '';
+        });
+
+        if (inputEl) inputEl.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                submitBtn && submitBtn.click();
+            }
+        });
+
+        window.addEventListener('storage', function (ev) {
+            if (ev.key === STORAGE_KEY) renderQuestions();
+        });
+
+        // --- Popup open helper ---
+        function openInIframe(url) {
+            try {
+                var w = 720, h = 560;
+                var dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : screen.left;
+                var dualScreenTop = window.screenTop !== undefined ? window.screenTop : screen.top;
+                var width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
+                var height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
+                var left = ((width / 2) - (w / 2)) + dualScreenLeft;
+                var top = ((height / 2) - (h / 2)) + dualScreenTop;
+                var features = 'scrollbars=yes,resizable=yes,toolbar=no,location=no,status=no,menubar=no,width=' + w + ',height=' + h + ',top=' + top + ',left=' + left;
+                var popup = window.open(url || 'bewertung_popup.html', 'bewertungPopup', features);
+                if (popup && popup.focus) popup.focus();
+                if (!popup) {
+                    try { window.open(url || 'bewertung_popup.html', '_blank'); } catch (e) { window.location.href = url || 'bewertung_popup.html'; }
+                }
+            } catch (err) {
+                console.warn('Konnte Popup-Fenster nicht öffnen, navigiere zur Popup-Seite:', err);
+                try { window.open(url || 'bewertung_popup.html', '_blank'); } catch (e) { window.location.href = url || 'bewertung_popup.html'; }
+            }
+        }
+
+        // Bind buttons and initialize on DOM ready
+        document.addEventListener('DOMContentLoaded', function () {
+            seedIfEmpty();
+            renderQuestions();
+
+            const btn = document.getElementById('openBewertungBtn');
             if (btn) btn.addEventListener('click', function (e) {
                 e.preventDefault();
-                openInIframe();
+                openInIframe('bewertung_popup.html');
             });
-        })();
 
+        });
+
+        // forward message from popup to iframe if needed
         window.addEventListener('message', function (ev) {
             try {
                 var data = ev.data || {};
@@ -144,75 +292,8 @@
             if (el) el.textContent = String(n);
         }
         window.setParticipantCount = setParticipantCount;
-        </script>
-        <script src="Umfrage.js" defer></script>
+
+    })();
+    </script>
 </body>
 </html>
-
-<script>
-document.addEventListener("click", function (e) {
-
-    // UPVOTE
-    if (e.target.closest(".upvote")) {
-        const btn = e.target.closest(".upvote");
-        let votes = parseInt(btn.dataset.votes, 10);
-
-        votes++;
-        btn.dataset.votes = votes;
-        btn.querySelector("span").textContent = votes;
-    }
-
-    // DOWNVOTE
-    if (e.target.closest(".downvote")) {
-        const downBtn = e.target.closest(".downvote");
-        const upBtn = downBtn.parentElement.querySelector(".upvote");
-
-        let votes = parseInt(upBtn.dataset.votes, 10);
-
-            votes--;
-            upBtn.dataset.votes = votes;
-            upBtn.querySelector("span").textContent = votes;
-    }
-
-});
-
-
-document.getElementById("submitQuestion").addEventListener("click", addQuestion);
-
-document.getElementById("questionInput").addEventListener("keypress", function (e) {
-    if (e.key === "Enter") {
-        addQuestion();
-    }
-});
-
-function addQuestion() {
-    const input = document.getElementById("questionInput");
-    const text = input.value.trim();
-
-    if (text === "") return;
-
-    const questionsContainer = document.querySelector(".questions > div");
-
-    const card = document.createElement("div");
-    card.className = "question-card";
-
-    card.innerHTML = `
-        <p class="question-meta">Ein Student fragt:</p>
-        <p class="question-text">${text}</p>
-        <div class="question-actions">
-            <button class="upvote" data-votes="0">⬆ <span>0</span></button>
-            <button class="downvote">⬇</button>
-        </div>
-    `;
-
-    questionsContainer.appendChild(card);
-
-    questionsContainer.parentElement.scrollTop =
-    questionsContainer.parentElement.scrollHeight;
-
-
-    input.value = "";
-}
-
-
-</script>
