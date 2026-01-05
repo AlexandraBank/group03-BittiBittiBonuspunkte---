@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
 
     const STORAGE_KEY = "savedSurveys";
+    const SHARE_WITH_RATING = false;
 
     const container = document.getElementById("surveyContainer");
     const openBtn = document.getElementById("openSurveyBtn");
@@ -74,22 +75,22 @@ document.addEventListener("DOMContentLoaded", () => {
             addSurveyPoll(survey);
 
             // also create a shared rating poll entry so mobile views can vote
-            try {
-                const pollsKey = 'rating_polls';
-                var raw = localStorage.getItem(pollsKey);
-                var polls = raw ? JSON.parse(raw) : [];
-                // create a poll object that includes the multi-choice answers so mobile can render them
-                var pollObj = {
-                    id: id,
-                    text: question,
-                    // store answers with counts so mobile can show options and votes
-                    answers: answers.map(function (a) { return { text: a, count: 0 }; }),
-                    createdAt: Date.now()
-                };
-                polls.unshift(pollObj);
-                localStorage.setItem(pollsKey, JSON.stringify(polls));
-                try { if (window.BroadcastChannel) new BroadcastChannel('rating_polls').postMessage('updated'); } catch (e) {}
-            } catch (e) { console.warn('Could not create shared poll', e); }
+            if (SHARE_WITH_RATING) {
+                try {
+                    const pollsKey = 'rating_polls';
+                    var raw = localStorage.getItem(pollsKey);
+                    var polls = raw ? JSON.parse(raw) : [];
+                    var pollObj = {
+                        id: id,
+                        text: question,
+                        answers: answers.map(function (a) { return { text: a, count: 0 }; }),
+                        createdAt: Date.now()
+                    };
+                    polls.unshift(pollObj);
+                    localStorage.setItem(pollsKey, JSON.stringify(polls));
+                    try { if (window.BroadcastChannel) new BroadcastChannel('rating_polls').postMessage('updated'); } catch (e) {}
+                } catch (e) { console.warn('Could not create shared poll', e); }
+            }
             close();
         };
 
