@@ -1,29 +1,92 @@
-* { box-sizing: border-box; font-family: "Plus Jakarta Sans", sans-serif; margin:0; padding:0; }
+* { 
+    box-sizing: border-box; 
+    font-family: "Plus Jakarta Sans", sans-serif; 
+    margin: 0; 
+    padding: 0; 
+}
 
 body { 
-    background-color:#ffffff;
- }
+    background-color: #ffffff; 
+}
 
 .screen { 
-    width:85%; margin:20px auto;
-    display: flex;
-    justify-content: center;
- }
+    width: 85%; 
+    margin: 20px auto; 
+    display: flex; 
+    justify-content: center; 
+}
 
 .section { 
-    background-color: #f7f7f7;
-    border-radius:10px; 
-    padding:15px; 
-    width: 600px;
+    background-color: #f7f7f7; 
+    border-radius: 10px; 
+    padding: 15px; 
+    width: 600px; 
+    margin-bottom: 20px; 
 }
 
-iframe { width:100%; height:90vh; border-radius:8px; border:0; }
-
-/* Alte Bottom Navigation */
-.bottom-nav {
-    position: fixed; bottom:0; width:100%;
-    display:flex; justify-content:space-around;
-    background:#fff; border-top:1px solid #ccc; padding:10px 0;
+iframe { 
+    width: 100%; 
+    height: 90vh; 
+    border-radius: 8px; 
+    border: 0; 
 }
-.bottom-nav button { background:none; border:none; font-size:16px; cursor:pointer; }
-.bottom-nav .active { font-weight:bold; }
+
+.survey {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.poll-question {
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.poll-options {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.poll-option {
+    width: 48%;
+    background-color: #eeeeee;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.delete-survey {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.bottom-nav { 
+    position: fixed; 
+    bottom: 0; 
+    width: 100%; 
+    display: flex; 
+    justify-content: space-around; 
+    background: #fff; 
+    border-top: 1px solid #ccc; 
+    padding: 10px 0; 
+}
+
+.bottom-nav button { 
+    background: none; 
+    border: none; 
+    font-size: 16px; 
+    cursor: pointer; 
+}
+
+.bottom-nav .active { 
+    font-weight: bold; 
+}

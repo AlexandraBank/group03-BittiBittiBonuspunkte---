@@ -18,11 +18,45 @@
         </div>
     </div>
 
+    <!-- Umfragetool -->
+    <div class="screen">
+        <div class="section">
+            <div class="wrap">
+                <div class="survey">
+                    <div class="poll-question">Umfrage</div>
+                    <div class="poll-options">
+                        <button class="poll-option" onclick="highlightOption(event)">Option 1 (50%)</button>
+                        <button class="poll-option" onclick="highlightOption(event)">Option 2 (50%)</button>
+                    </div>
+                    <button class="delete-survey">🗑</button>
+                </div>
+                <div class="survey">
+                    <div class="poll-question">Umfrage</div>
+                    <div class="poll-options">
+                        <button class="poll-option" onclick="highlightOption(event)">Option 1 (50%)</button>
+                        <button class="poll-option" onclick="highlightOption(event)">Option 2 (50%)</button>
+                    </div>
+                    <button class="delete-survey">🗑</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Alte Bottom Navigation -->
     <div class="bottom-nav">
-		<button id="fragen" onclick="window.location.href='HandyQuestions.html'">Fragen</button>
-		<button id="home" class="active">Home</button>
-		<button id="raeume" onclick="window.location.href='HandyRäume.html'">Räume</button>
-	</div>
+        <button id="fragen" onclick="window.location.href='HandyQuestions.html'">Fragen</button>
+        <button id="home" class="active">Home</button>
+        <button id="raeume" onclick="window.location.href='HandyRäume.html'">Räume</button>
+    </div>
+
+    <script>
+        function highlightOption(event) {
+            const buttons = event.target.parentElement.querySelectorAll('.poll-option');
+            if ([...buttons].some(button => button.style.backgroundColor === 'green')) {
+                return; // If any button is already green, do nothing
+            }
+            event.target.style.backgroundColor = 'green'; // Set clicked button to green
+        }
+    </script>
 </body>
 </html>
