@@ -1,88 +1,165 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Räume</title>
+    <title>Fragen</title>
     <link rel="stylesheet" href="HandyQuestions.css">
     <link rel="stylesheet" href="Handyleiste.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <title>Fragen</title>
 </head>
 <body>
     <div class="bottom-nav">
-		<button id="fragen" class="active">Fragen</button>
-		<button id="home" onclick="window.location.href='HandyHome.html'">Home</button>
-		<button id="raeume" onclick="window.location.href='HandyRäume.html'">Räume</button>
-	</div>
-    <div class="questions-container">
-    <h1>Fragen</h1>
-    <div class="questions-list">
-        <div class="question-card">
-            <p class="question-meta">Ein Student fragt:</p>
-            <p class="question-text">Was sind Metaphern?</p>
-            <div class="question-actions">
-                <button class="upvote" data-votes="3">⬆ <span>3</span></button>
-                <button class="downvote">⬇</button>
-            </div>
-        </div>
+        <button id="fragen" class="active">Fragen</button>
+        <button id="home" onclick="window.location.href='HandyHome.html'">Home</button>
+        <button id="raeume" onclick="window.location.href='HandyRäume.html'">Räume</button>
     </div>
 
-    <div class="question-input-area">
-        <input type="text" id="questionInput" class="input-question" placeholder="Stelle eine Frage...">
-        <button id="submitQuestion" class="input-submit">Frage abschicken</button>
+    <div class="questions-container">
+        <h1>Fragen</h1>
+
+        <div class="questions-list" id="questionsList">
+            <!-- Fragen werden hier gerendert -->
+        </div>
+
+        <div class="question-input-area">
+            <input type="text" id="questionInput" class="input-question" placeholder="Stelle eine Frage...">
+            <button id="submitQuestion" class="input-submit">Frage abschicken</button>
+        </div>
     </div>
-</div>
-    
-</body>
-</html>
 
 <script>
-document.addEventListener("click", function (e) {
-    if (e.target.closest(".upvote")) {
-        const btn = e.target.closest(".upvote");
-        let votes = parseInt(btn.dataset.votes, 10);
-        votes++;
-        btn.dataset.votes = votes;
-        btn.querySelector("span").textContent = votes;
+(function () {
+    const STORAGE_KEY = 'hci_questions_v1';
+    const listEl = document.getElementById('questionsList');
+    const inputEl = document.getElementById('questionInput');
+    const submitBtn = document.getElementById('submitQuestion');
+
+    function loadQuestions() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            return raw ? JSON.parse(raw) : [];
+        } catch (e) { console.warn('Fehler beim Laden der Fragen', e); return []; }
+    }
+    function saveQuestions(arr) {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+            try { if (window.BroadcastChannel) new BroadcastChannel('hci_questions').postMessage('updated'); } catch (e) {}
+        } catch (e) { console.warn('Fehler beim Speichern der Fragen', e); }
     }
 
-    if (e.target.closest(".downvote")) {
-        const downBtn = e.target.closest(".downvote");
-        const upBtn = downBtn.parentElement.querySelector(".upvote");
-        let votes = parseInt(upBtn.dataset.votes, 10);
-        votes--;
-        upBtn.dataset.votes = votes;
-        upBtn.querySelector("span").textContent = votes;
+    function createCard(q) {
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        card.dataset.id = q.id;
+
+        const meta = document.createElement('p');
+        meta.className = 'question-meta';
+        meta.textContent = 'Ein Student fragt:';
+        card.appendChild(meta);
+
+        const txt = document.createElement('p');
+        txt.className = 'question-text';
+        txt.textContent = q.text || '';
+        card.appendChild(txt);
+
+        const actions = document.createElement('div');
+        actions.className = 'question-actions';
+
+        const up = document.createElement('button');
+        up.className = 'upvote';
+        up.dataset.id = q.id;
+        up.innerHTML = '⬆ <span>' + (q.votes || 0) + '</span>';
+
+        const down = document.createElement('button');
+        down.className = 'downvote';
+        down.dataset.id = q.id;
+        down.textContent = '⬇';
+
+        // kein Lösch-Button auf Handy
+
+        actions.appendChild(up);
+        actions.appendChild(down);
+        card.appendChild(actions);
+
+        return card;
     }
-});
 
-document.getElementById("submitQuestion").addEventListener("click", addQuestion);
-document.getElementById("questionInput").addEventListener("keypress", function (e) {
-    if (e.key === "Enter") addQuestion();
-});
+    function render() {
+        const qs = loadQuestions();
+        listEl.innerHTML = '';
+        if (!qs || !qs.length) {
+            const empty = document.createElement('p');
+            empty.textContent = 'Keine Fragen vorhanden.';
+            listEl.appendChild(empty);
+            return;
+        }
+        // sort by votes desc then created asc
+        qs.sort((a,b) => (b.votes||0) - (a.votes||0) || (a.created||0) - (b.created||0));
+        qs.forEach(q => listEl.appendChild(createCard(q)));
+    }
 
-function addQuestion() {
-    const input = document.getElementById("questionInput");
-    const text = input.value.trim();
-    if (text === "") return;
+    function addQuestion(text) {
+        if (!text || !text.trim()) return;
+        const qs = loadQuestions();
+        const item = { id: Date.now().toString(36) + Math.random().toString(36).slice(2,8), text: text.trim(), votes: 0, created: Date.now() };
+        qs.push(item);
+        saveQuestions(qs);
+        render();
+    }
 
-    const questionsContainer = document.querySelector(".questions-list");
-    const card = document.createElement("div");
-    card.className = "question-card";
-    card.innerHTML = `
-        <p class="question-meta">Ein Student fragt:</p>
-        <p class="question-text">${text}</p>
-        <div class="question-actions">
-            <button class="upvote" data-votes="0">⬆ <span>0</span></button>
-            <button class="downvote">⬇</button>
-        </div>
-    `;
-    questionsContainer.appendChild(card);
-    input.value = "";
-}
+    function updateVotes(id, delta) {
+        const qs = loadQuestions();
+        const idx = qs.findIndex(x => x.id === id);
+        if (idx === -1) return;
+        qs[idx].votes = (qs[idx].votes || 0) + delta;
+        saveQuestions(qs);
+        render();
+    }
+
+    // events
+    listEl.addEventListener('click', function (e) {
+        const up = e.target.closest('.upvote');
+        const down = e.target.closest('.downvote');
+        if (up) {
+            const id = up.dataset.id;
+            updateVotes(id, +1);
+        } else if (down) {
+            const id = down.dataset.id;
+            updateVotes(id, -1);
+        }
+    });
+
+    submitBtn.addEventListener('click', function (ev) {
+        ev.preventDefault();
+        addQuestion(inputEl.value);
+        inputEl.value = '';
+    });
+    inputEl.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            submitBtn.click();
+        }
+    });
+
+    // sync across tabs/windows
+    window.addEventListener('storage', function (e) {
+        if (!e || !e.key) return;
+        if (e.key === STORAGE_KEY) render();
+    });
+    try {
+        if (window.BroadcastChannel) {
+            const bc = new BroadcastChannel('hci_questions');
+            bc.addEventListener('message', function () { render(); });
+        }
+    } catch (e) {}
+
+    // initial render
+    document.addEventListener('DOMContentLoaded', render);
+    if (document.readyState === 'complete' || document.readyState === 'interactive') render();
+})();
 </script>
+</body>
+</html>
