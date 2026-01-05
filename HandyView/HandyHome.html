@@ -150,24 +150,29 @@
         // If rating_polls is empty but there are saved desktop surveys, import them so mobile can display them
         function ensureImportedSurveys() {
             try {
-                var polls = loadPolls();
-                if (polls && polls.length) {
-                    console.log('HandyHome: rating_polls already present,', polls.length, 'poll(s)');
-                    return; // already present
-                }
-                var raw = localStorage.getItem('savedSurveys');
-                if (!raw) return;
-                var saved = JSON.parse(raw || '[]');
+                var polls = loadPolls() || [];
+                var rawSaved = localStorage.getItem('savedSurveys');
+                if (!rawSaved) return;
+                var saved = JSON.parse(rawSaved || '[]');
                 if (!Array.isArray(saved) || !saved.length) return;
-                polls = [];
+
+                var changed = false;
                 saved.forEach(function (s) {
-                    var id = s.id || ('survey_' + Date.now());
+                    if (!s || !s.id) return;
+                    // skip if already present
+                    if (polls.find(function (p) { return p.id === s.id; })) return;
                     var answers = Array.isArray(s.answers) ? s.answers.map(function (a) { return { text: a, count: 0 }; }) : [];
                     if (!answers.length) return;
-                    polls.unshift({ id: id, text: s.question || s.text || '', answers: answers, createdAt: Date.now() });
+                    polls.unshift({ id: s.id, text: s.question || s.text || '', answers: answers, createdAt: Date.now() });
+                    changed = true;
                 });
-                if (polls.length) savePolls(polls);
-                console.log('HandyHome: imported', polls.length, 'poll(s) from savedSurveys into rating_polls');
+
+                if (changed) {
+                    savePolls(polls);
+                    console.log('HandyHome: merged', saved.length, 'savedSurveys into rating_polls (new total:', polls.length + ')');
+                } else {
+                    console.log('HandyHome: no new savedSurveys to import (rating_polls length =', polls.length, ')');
+                }
             } catch (e) { console.warn('Could not import savedSurveys into rating_polls', e); }
         }
 
