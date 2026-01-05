@@ -66,19 +66,45 @@ document.addEventListener('DOMContentLoaded', function () {
 		} catch (e) { console.warn('Konnte polls nicht laden', e); }
 	}
 
-	function deletePoll(id) {
-		const idx = polls.findIndex(function (x) { return x.id === id; });
-		if (idx === -1) return;
-		polls.splice(idx, 1);
-		savePolls();
-		renderPolls();
+
+	// If rating_polls is empty but there are saved desktop surveys, import them so mobile can display them
+	function ensureImportedSurveys() {
+		try {
+			loadPolls();
+			if (polls && polls.length) return;
+			var raw = localStorage.getItem('savedSurveys');
+			if (!raw) return;
+			var saved = JSON.parse(raw || '[]');
+			if (!Array.isArray(saved) || !saved.length) return;
+			polls = [];
+			saved.forEach(function (s) {
+				var id = s.id || ('survey_' + Date.now());
+				var answers = Array.isArray(s.answers) ? s.answers.map(function (a) { return { text: a, count: 0 }; }) : [];
+				if (!answers.length) return;
+				polls.unshift({ id: id, text: s.question || s.text || '', answers: answers, createdAt: Date.now() });
+			});
+			if (polls.length) savePolls();
+		} catch (e) { console.warn('Could not import savedSurveys into rating_polls', e); }
 	}
+
+	// Mobile deletion is disabled; deleting polls is handled on Desktop only.
 
 	function savePolls() {
 		try {
 			localStorage.setItem(pollsKey, JSON.stringify(polls));
+			try { if (window.BroadcastChannel) new BroadcastChannel('rating_polls').postMessage('updated'); } catch (e) {}
 		} catch (e) { console.warn('Konnte polls nicht speichern', e); }
 	}
+
+
+	// per-device vote tracking
+	function loadVotes() { try { return JSON.parse(localStorage.getItem('rating_votes')||'{}'); } catch (e) { return {}; } }
+
+	function saveVotes(votes) { try { localStorage.setItem('rating_votes', JSON.stringify(votes)); } catch (e) {} }
+
+	function hasVoted(pollId) { var v = loadVotes(); return v && v[pollId] !== undefined; }
+
+	function recordVoteLocal(pollId, choice) { var v = loadVotes(); v[pollId] = choice; saveVotes(v); }
 
 	function createPollBar(className, emoji, count, pct) {
 		const wrap = document.createElement('div');
@@ -106,14 +132,17 @@ document.addEventListener('DOMContentLoaded', function () {
 	function renderPolls() {
 		const container = document.getElementById('polls');
 		if (!container) return;
+		// Zeige nur die klassischen Bewertungen (ja/neutral/nein) in dieser Mobile-Bewertungsansicht.
+		// Multi-Choice-Umfragen (poll.answers) werden hier nicht angezeigt.
 		container.innerHTML = '';
-		if (!polls.length) {
+		const ratingPolls = (polls || []).filter(function (p) { return !Array.isArray(p.answers) || !p.answers.length; });
+		if (!ratingPolls.length) {
 			const p = document.createElement('p');
-			p.textContent = 'Keine Fragen zum Bewerten vorhanden. Erstelle eine neue Frage, bei der die Studierenden positiv/neutral/negativ abstimmen können.';
+			p.textContent = 'Keine Bewertungen vorhanden.';
 			container.appendChild(p);
 			return;
 		}
-		polls.forEach(function (poll) {
+		ratingPolls.forEach(function (poll) {
 			const box = document.createElement('div');
 			box.className = 'poll';
 
@@ -138,37 +167,23 @@ document.addEventListener('DOMContentLoaded', function () {
 				noPct = 100 - yesPct - neutralPct;
 			}
 
-			//Abbstimmmöglichkeiten: positive, neutral, negative
 			bars.appendChild(createPollBar('bar-yes', '😊', yes, yesPct));
 			bars.appendChild(createPollBar('bar-neutral', '😐', neutral, neutralPct));
 			bars.appendChild(createPollBar('bar-no', '☹️', no, noPct));
 
 			box.appendChild(bars);
 
-
-			//Abstimmungs-Buttons und Statistik
 			const controls = document.createElement('div');
 			controls.className = 'poll-controls';
-			const stats = document.createElement('div');
+			// voting controls: legacy three-choice
 			controls.appendChild(createVoteButton('😊', 'Stimme: positiv', function () { votePoll(poll.id, 'yes'); }));
 			controls.appendChild(createVoteButton('😐', 'Stimme: neutral', function () { votePoll(poll.id, 'neutral'); }));
 			controls.appendChild(createVoteButton('☹️', 'Stimme: negativ', function () { votePoll(poll.id, 'no'); }));
+
+			const stats = document.createElement('div');
 			stats.className = 'poll-stats';
 			stats.textContent = 'Stimmen: ' + total;
 			controls.appendChild(stats);
-
-			//Papierkorb
-			const delWrap = document.createElement('div');
-			delWrap.className = 'poll-del';
-			const delBtn = document.createElement('button');
-			delBtn.type = 'button';
-			delBtn.title = 'Bewertung löschen';
-			delBtn.innerHTML = '🗑';
-			delBtn.addEventListener('click', function () {
-				if (confirm('Diese Bewertung wirklich löschen?')) deletePoll(poll.id);
-			});
-			delWrap.appendChild(delBtn);
-			controls.appendChild(delWrap);
 
 			box.appendChild(controls);
 
@@ -179,6 +194,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	function votePoll(id, choice) {
 		const p = polls.find(function (x) { return x.id === id; });
 		if (!p) return;
+		if (hasVoted(id)) { alert('Du hast bereits abgestimmt.'); return; }
 		// compute previous positive percentage to detect crossing the 50% threshold
 		var prevYes = p.yes || 0;
 		var prevNeutral = p.neutral || 0;
@@ -190,6 +206,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		else if (choice === 'no') p.no = (p.no || 0) + 1;
 		else if (choice === 'neutral') p.neutral = (p.neutral || 0) + 1;
 
+		recordVoteLocal(id, choice);
 		savePolls();
 		renderPolls();
 
@@ -208,25 +225,40 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 
+	function voteAnswer(id, answerIndex) {
+		const p = polls.find(function (x) { return x.id === id; });
+		if (!p || !Array.isArray(p.answers) || !p.answers[answerIndex]) return;
+		p.answers[answerIndex].count = (p.answers[answerIndex].count || 0) + 1;
+		savePolls();
+		renderPolls();
+	}
+
+
 	function showHamster() {
 		if (document.getElementById('hamsterOverlay')) return;
 		var overlay = document.createElement('div');
 		overlay.id = 'hamsterOverlay';
 		overlay.className = 'hamster-overlay';
-		var img = document.createElement('img');
-		img.src = '../pictures/BittiHamster.jpg';
-		img.alt = 'Bitti Hamster';
+
+		// use absolute root path so the image resolves correctly from any page/popup
+		var imgUrl = '/pictures/BittiHamster.jpg';
+
+		var img = new Image();
 		img.className = 'hamster-image';
+		img.alt = 'Bitti Hamster';
 
-
-		img.addEventListener('error', function () {
-			overlay.innerHTML = '<div class="hamster-emoji">🐹</div>';
+		img.onload = function () {
+			overlay.appendChild(img);
+			document.body.appendChild(overlay);
 			setTimeout(function () { try { overlay.remove(); } catch (e) {} }, 3000);
-		});
+		};
+		img.onerror = function () {
+			overlay.innerHTML = '<div class="hamster-emoji">🐹</div>';
+			document.body.appendChild(overlay);
+			setTimeout(function () { try { overlay.remove(); } catch (e) {} }, 3000);
+		};
 
-		overlay.appendChild(img);
-		document.body.appendChild(overlay);
-		setTimeout(function () { try { overlay.remove(); } catch (e) {} }, 3000);
+		img.src = imgUrl;
 	}
 
 	window.openPopup = function () {
@@ -395,6 +427,8 @@ document.addEventListener('DOMContentLoaded', function () {
 	showSuggestionsBtn.addEventListener('click', toggleSuggestions);
 
 
+	// on load, ensure polls imported from savedSurveys if needed, then load and render
+	ensureImportedSurveys();
 	loadPolls();
 	renderPolls();
 

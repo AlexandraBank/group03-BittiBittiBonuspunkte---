@@ -21,23 +21,8 @@
     <!-- Umfragetool -->
     <div class="screen">
         <div class="section">
-            <div class="wrap">
-                <div class="survey">
-                    <div class="poll-question">Umfrage</div>
-                    <div class="poll-options">
-                        <button class="poll-option" onclick="highlightOption(event)">Option 1 (50%)</button>
-                        <button class="poll-option" onclick="highlightOption(event)">Option 2 (50%)</button>
-                    </div>
-                    <button class="delete-survey">🗑</button>
-                </div>
-                <div class="survey">
-                    <div class="poll-question">Umfrage</div>
-                    <div class="poll-options">
-                        <button class="poll-option" onclick="highlightOption(event)">Option 1 (50%)</button>
-                        <button class="poll-option" onclick="highlightOption(event)">Option 2 (50%)</button>
-                    </div>
-                    <button class="delete-survey">🗑</button>
-                </div>
+            <div class="wrap" id="surveysWrap">
+                <!-- Surveys / polls from desktop will be rendered here. Mobile can only vote. -->
             </div>
         </div>
     </div>
@@ -50,13 +35,184 @@
     </div>
 
     <script>
-        function highlightOption(event) {
-            const buttons = event.target.parentElement.querySelectorAll('.poll-option');
-            if ([...buttons].some(button => button.style.backgroundColor === 'green')) {
-                return; // If any button is already green, do nothing
-            }
-            event.target.style.backgroundColor = 'green'; // Set clicked button to green
+    // HandyHome: render polls from desktop but only allow voting here.
+    document.addEventListener('DOMContentLoaded', function () {
+        const POLLS_KEY = 'rating_polls';
+        const container = document.getElementById('surveysWrap');
+
+        function loadPolls() {
+            try {
+                const raw = localStorage.getItem(POLLS_KEY);
+                return raw ? JSON.parse(raw) : [];
+            } catch (e) { console.warn('Could not read polls', e); return []; }
         }
+
+        // per-device vote tracking (prevent multiple votes from same browser)
+        function loadVotes() {
+            try { return JSON.parse(localStorage.getItem('rating_votes')||'{}'); } catch (e) { return {}; }
+        }
+
+        function saveVotes(votes) {
+            try { localStorage.setItem('rating_votes', JSON.stringify(votes)); } catch (e) {}
+        }
+
+        function hasVoted(pollId) {
+            var v = loadVotes();
+            return v && v[pollId] !== undefined;
+        }
+
+        function recordVoteLocal(pollId, choice) {
+            var v = loadVotes();
+            v[pollId] = choice;
+            saveVotes(v);
+        }
+
+        function savePolls(polls) {
+            try {
+                localStorage.setItem(POLLS_KEY, JSON.stringify(polls));
+                try { if (window.BroadcastChannel) new BroadcastChannel('rating_polls').postMessage('updated'); } catch (e) {}
+            } catch (e) { console.warn('Could not save polls', e); }
+        }
+
+        function render() {
+            container.innerHTML = '';
+            const polls = loadPolls();
+            // show only multi-choice surveys (polls with answers) in this view
+            const surveys = (polls || []).filter(function (p) { return Array.isArray(p.answers) && p.answers.length; });
+            if (!surveys.length) {
+                const p = document.createElement('p');
+                p.textContent = 'Keine Umfragen vorhanden.';
+                container.appendChild(p);
+                return;
+            }
+
+            surveys.forEach(function (poll) {
+                const box = document.createElement('div');
+                box.className = 'survey';
+
+                const q = document.createElement('div');
+                q.className = 'poll-question';
+                q.textContent = poll.text || poll.question || 'Frage';
+                box.appendChild(q);
+
+                const opts = document.createElement('div');
+                opts.className = 'poll-options';
+
+                var votedKey = loadVotes()[poll.id];
+                if (Array.isArray(poll.answers) && poll.answers.length) {
+                    // multi-choice survey
+                    poll.answers.forEach(function (ans, idx) {
+                        const btn = document.createElement('button');
+                        btn.className = 'poll-option';
+                        btn.textContent = (ans.text || ('Option ' + (idx+1))) + ' (' + (ans.count||0) + ')';
+                        // disable if already voted
+                        if (votedKey !== undefined) {
+                            btn.disabled = true;
+                            if (String(votedKey) === 'ans:' + idx) btn.classList.add('voted');
+                        } else {
+                            btn.addEventListener('click', function () { voteAnswer(poll.id, idx); });
+                        }
+                        opts.appendChild(btn);
+                    });
+                } else {
+                    const yes = poll.yes || 0;
+                    const neutral = poll.neutral || 0;
+                    const no = poll.no || 0;
+
+                    const yesBtn = document.createElement('button');
+                    yesBtn.className = 'poll-option';
+                    yesBtn.textContent = `😊 ${yes}`;
+                    if (votedKey !== undefined) { yesBtn.disabled = true; if (votedKey === 'yes') yesBtn.classList.add('voted'); } else { yesBtn.addEventListener('click', function () { vote(poll.id, 'yes'); }); }
+
+                    const neutralBtn = document.createElement('button');
+                    neutralBtn.className = 'poll-option';
+                    neutralBtn.textContent = `😐 ${neutral}`;
+                    if (votedKey !== undefined) { neutralBtn.disabled = true; if (votedKey === 'neutral') neutralBtn.classList.add('voted'); } else { neutralBtn.addEventListener('click', function () { vote(poll.id, 'neutral'); }); }
+
+                    const noBtn = document.createElement('button');
+                    noBtn.className = 'poll-option';
+                    noBtn.textContent = `☹️ ${no}`;
+                    if (votedKey !== undefined) { noBtn.disabled = true; if (votedKey === 'no') noBtn.classList.add('voted'); } else { noBtn.addEventListener('click', function () { vote(poll.id, 'no'); }); }
+
+                    opts.appendChild(yesBtn);
+                    opts.appendChild(neutralBtn);
+                    opts.appendChild(noBtn);
+                }
+
+                box.appendChild(opts);
+
+                // mobile must not be able to delete surveys; do not render delete button
+
+                container.appendChild(box);
+            });
+        }
+
+        // If rating_polls is empty but there are saved desktop surveys, import them so mobile can display them
+        function ensureImportedSurveys() {
+            try {
+                var polls = loadPolls();
+                if (polls && polls.length) {
+                    console.log('HandyHome: rating_polls already present,', polls.length, 'poll(s)');
+                    return; // already present
+                }
+                var raw = localStorage.getItem('savedSurveys');
+                if (!raw) return;
+                var saved = JSON.parse(raw || '[]');
+                if (!Array.isArray(saved) || !saved.length) return;
+                polls = [];
+                saved.forEach(function (s) {
+                    var id = s.id || ('survey_' + Date.now());
+                    var answers = Array.isArray(s.answers) ? s.answers.map(function (a) { return { text: a, count: 0 }; }) : [];
+                    if (!answers.length) return;
+                    polls.unshift({ id: id, text: s.question || s.text || '', answers: answers, createdAt: Date.now() });
+                });
+                if (polls.length) savePolls(polls);
+                console.log('HandyHome: imported', polls.length, 'poll(s) from savedSurveys into rating_polls');
+            } catch (e) { console.warn('Could not import savedSurveys into rating_polls', e); }
+        }
+
+        function vote(id, choice) {
+            const polls = loadPolls();
+            const p = polls.find(function (x) { return x.id === id; });
+            if (!p) return;
+            // prevent multiple votes from same device
+            if (hasVoted(id)) { alert('Du hast bereits abgestimmt.'); return; }
+            if (choice === 'yes') p.yes = (p.yes || 0) + 1;
+            else if (choice === 'neutral') p.neutral = (p.neutral || 0) + 1;
+            else if (choice === 'no') p.no = (p.no || 0) + 1;
+            recordVoteLocal(id, choice);
+            savePolls(polls);
+            render();
+        }
+
+        function voteAnswer(id, answerIndex) {
+            const polls = loadPolls();
+            const p = polls.find(function (x) { return x.id === id; });
+            if (!p || !Array.isArray(p.answers) || !p.answers[answerIndex]) return;
+            if (hasVoted(id)) { alert('Du hast bereits abgestimmt.'); return; }
+            p.answers[answerIndex].count = (p.answers[answerIndex].count || 0) + 1;
+            recordVoteLocal(id, 'ans:' + answerIndex);
+            savePolls(polls);
+            render();
+        }
+
+        window.addEventListener('storage', function (e) {
+            if (!e || !e.key) return;
+            if (e.key === POLLS_KEY) render();
+        });
+
+        try {
+            if (window.BroadcastChannel) {
+                const bc = new BroadcastChannel('rating_polls');
+                bc.addEventListener('message', function () { render(); });
+            }
+        } catch (e) { }
+
+        ensureImportedSurveys();
+        const pollsAfter = loadPolls();
+        console.log('HandyHome: polls after import check =', pollsAfter.length);
+        render();
+    });
     </script>
 </body>
 </html>

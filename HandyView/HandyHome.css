@@ -62,12 +62,7 @@ iframe {
     text-align: center;
 }
 
-.delete-survey {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-}
+/* .delete-survey removed: mobile cannot delete surveys */
 
 .bottom-nav { 
     position: fixed; 

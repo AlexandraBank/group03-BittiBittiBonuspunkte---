@@ -67,9 +67,29 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            const survey = { question, answers };
+            // assign an id so we can reference this survey from other views
+            const id = 'survey_' + Date.now();
+            const survey = { id: id, question, answers };
             saveSurvey(survey);
             addSurveyPoll(survey);
+
+            // also create a shared rating poll entry so mobile views can vote
+            try {
+                const pollsKey = 'rating_polls';
+                var raw = localStorage.getItem(pollsKey);
+                var polls = raw ? JSON.parse(raw) : [];
+                // create a poll object that includes the multi-choice answers so mobile can render them
+                var pollObj = {
+                    id: id,
+                    text: question,
+                    // store answers with counts so mobile can show options and votes
+                    answers: answers.map(function (a) { return { text: a, count: 0 }; }),
+                    createdAt: Date.now()
+                };
+                polls.unshift(pollObj);
+                localStorage.setItem(pollsKey, JSON.stringify(polls));
+                try { if (window.BroadcastChannel) new BroadcastChannel('rating_polls').postMessage('updated'); } catch (e) {}
+            } catch (e) { console.warn('Could not create shared poll', e); }
             close();
         };
 
@@ -94,6 +114,28 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(surveys));
     }
 
+    // keep previous poll state to detect crossings (e.g. an answer passing 50%)
+    var lastPollStates = {};
+
+    function updateLastPollStatesFromLocal() {
+        try {
+            var raw = localStorage.getItem('rating_polls');
+            var all = raw ? JSON.parse(raw) : [];
+            all.forEach(function (p) {
+                if (!p || !p.id) return;
+                if (Array.isArray(p.answers) && p.answers.length) {
+                    var total = p.answers.reduce(function (acc, a) { return acc + (a.count || 0); }, 0) || 1;
+                    var maxPct = 0;
+                    for (var i = 0; i < p.answers.length; i++) {
+                        var pct = Math.round(((p.answers[i].count || 0) / total) * 100);
+                        if (pct > maxPct) maxPct = pct;
+                    }
+                    lastPollStates[p.id] = maxPct;
+                }
+            });
+        } catch (e) { /* ignore */ }
+    }
+
     function loadSavedSurveys() {
         const surveys = getSavedSurveys();
 
@@ -105,6 +147,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (oldList) oldList.remove();
 
         surveys.forEach(s => addSurveyPoll(s));
+        // initialize lastPollStates from any existing shared polls
+        updateLastPollStatesFromLocal();
     }
 
     function addSurveyPoll(survey) {
@@ -145,10 +189,78 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
 
         poll.querySelector(".poll-del button").onclick = () => {
+            if (!confirm('Diese Umfrage wirklich löschen?')) return;
             removeSurvey(survey.question);
+            // remove shared poll if present
+            try {
+                const pollsKey = 'rating_polls';
+                var raw = localStorage.getItem(pollsKey);
+                var polls = raw ? JSON.parse(raw) : [];
+                polls = polls.filter(p => p.id !== survey.id);
+                localStorage.setItem(pollsKey, JSON.stringify(polls));
+                try { if (window.BroadcastChannel) new BroadcastChannel('rating_polls').postMessage('updated'); } catch (e) {}
+            } catch (e) {}
             poll.remove();
         };
 
+        // store the survey id on the DOM element so it can be updated from storage events
+        if (survey.id) poll.dataset.pollId = survey.id;
+
         list.appendChild(poll);
     }
+
+    // Listen for changes to shared rating_polls so votes from mobile are reflected
+    window.addEventListener('storage', function (e) {
+        try {
+            if (!e || !e.key) return;
+            if (e.key === 'rating_polls') {
+                var polls = JSON.parse(e.newValue || '[]');
+                // update any poll elements that match by id
+                polls.forEach(function (p) {
+                    if (!p.id) return;
+                    var el = document.querySelector('.survey-list .poll[data-poll-id="' + p.id + '"]');
+                    if (el) {
+                        // find bar labels and fills and update counts if present
+                        var fills = el.querySelectorAll('.poll-bar-fill');
+                        var labels = el.querySelectorAll('.poll-bar-label');
+                            // support two shapes: legacy yes/no/neutral OR new multi-answer polls with p.answers array
+                            if (Array.isArray(p.answers) && p.answers.length) {
+                                var total = p.answers.reduce(function (acc, a) { return acc + (a.count || 0); }, 0) || 1;
+                                // update fills/labels per answer
+                                for (var i = 0; i < p.answers.length; i++) {
+                                    var ans = p.answers[i];
+                                    if (fills[i]) fills[i].style.width = Math.round(((ans.count||0)/total)*100) + '%';
+                                    if (labels[i]) labels[i].textContent = (ans.text || '').split(' ')[0] + ' ' + (ans.count||0) + ' (' + Math.round(((ans.count||0)/total)*100) + '%)';
+                                }
+                                // detect if any answer crossed the 50% positive threshold (from <=50 to >50)
+                                try {
+                                    var maxPct = 0;
+                                    for (var j = 0; j < p.answers.length; j++) {
+                                        var pctj = Math.round(((p.answers[j].count || 0) / total) * 100);
+                                        if (pctj > maxPct) maxPct = pctj;
+                                    }
+                                    var prev = lastPollStates[p.id] || 0;
+                                    if (prev <= 50 && maxPct > 50) {
+                                        try { showHamster(); } catch (e) {}
+                                    }
+                                    lastPollStates[p.id] = maxPct;
+                                } catch (e) {}
+                            } else {
+                                var total = (p.yes||0) + (p.neutral||0) + (p.no||0) || 1;
+                                if (fills.length >= 3) {
+                                    fills[0].style.width = Math.round((p.yes/total)*100) + '%';
+                                    fills[1].style.width = Math.round((p.neutral/total)*100) + '%';
+                                    fills[2].style.width = Math.round((p.no/total)*100) + '%';
+                                }
+                                if (labels.length >=3) {
+                                    labels[0].textContent = (labels[0].textContent.split(' ')[0]) + ' ' + (p.yes||0) + ' (' + Math.round((p.yes/total)*100) + '%)';
+                                    labels[1].textContent = (labels[1].textContent.split(' ')[0]) + ' ' + (p.neutral||0) + ' (' + Math.round((p.neutral/total)*100) + '%)';
+                                    labels[2].textContent = (labels[2].textContent.split(' ')[0]) + ' ' + (p.no||0) + ' (' + Math.round((p.no/total)*100) + '%)';
+                                }
+                            }
+                    }
+                });
+            }
+        } catch (err) { console.warn('storage update error', err); }
+    });
 });

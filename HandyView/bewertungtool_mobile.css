@@ -257,25 +257,4 @@
 
 .poll-stats { font-size: 13px; color: #444; margin-left: 6px; }
 
-.poll-del {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  z-index: 10;
-}
-.poll-del button {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: 18px;
-  color: #888;
-  padding: 6px;
-  border-radius: 6px;
-}
-.poll-del button:hover { color: #c0392b; background: rgba(192,57,43,0.06); }
-
-.poll-controls .poll-del {
-  position: static;
-  margin-left: auto;
-  align-self: flex-start;
-}
+/* poll-del styles removed because mobile clients cannot delete polls */
