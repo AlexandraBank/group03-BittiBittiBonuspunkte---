@@ -176,7 +176,6 @@ document.addEventListener('DOMContentLoaded', function () {
 	function votePoll(id, choice) {
 		const p = polls.find(function (x) { return x.id === id; });
 		if (!p) return;
-		// compute previous positive percentage to detect crossing the 50% threshold
 		var prevYes = p.yes || 0;
 		var prevNeutral = p.neutral || 0;
 		var prevNo = p.no || 0;
@@ -190,7 +189,6 @@ document.addEventListener('DOMContentLoaded', function () {
 		savePolls();
 		renderPolls();
 
-		// after voting, check new percentage and show hamster if crossed >50%
 		var newYes = p.yes || 0;
 		var newNeutral = p.neutral || 0;
 		var newNo = p.no || 0;

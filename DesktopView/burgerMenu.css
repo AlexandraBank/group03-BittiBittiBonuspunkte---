@@ -86,7 +86,7 @@ body {
   border-radius: 8px;
 }
 
-/* Animation für Burger zu X */
+
 #menu-toggle:checked + .menu-icon {
   transform: rotate(90deg);
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -94,13 +94,13 @@ body {
 .menu-icon {
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-/* Menü Animation */
+
 #menu-toggle:checked + .menu-icon + .menu {
   opacity: 1;
   transform: scaleY(1) translateY(0);
   pointer-events: auto;
 }
-/* ...entfernt, da oben animiert ... */
+
 .menu ul {
   list-style: none;
   margin: 0;
@@ -126,4 +126,3 @@ body {
 #menu-toggle {
   display: none;
 }
-/* ...entfernt, da oben animiert ... */

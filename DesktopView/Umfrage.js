@@ -68,13 +68,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // assign an id so we can reference this survey from other views
+
             const id = 'survey_' + Date.now();
             const survey = { id: id, question, answers };
             saveSurvey(survey);
             addSurveyPoll(survey);
 
-            // also create a shared rating poll entry so mobile views can vote
+
             if (SHARE_WITH_RATING) {
                 try {
                     const pollsKey = 'rating_polls';
@@ -148,7 +148,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (oldList) oldList.remove();
 
         surveys.forEach(s => addSurveyPoll(s));
-        // initialize lastPollStates from any existing shared polls
         updateLastPollStatesFromLocal();
     }
 
@@ -192,7 +191,6 @@ document.addEventListener("DOMContentLoaded", () => {
         poll.querySelector(".poll-del button").onclick = () => {
             if (!confirm('Diese Umfrage wirklich löschen?')) return;
             removeSurvey(survey.question);
-            // remove shared poll if present
             try {
                 const pollsKey = 'rating_polls';
                 var raw = localStorage.getItem(pollsKey);
@@ -204,7 +202,6 @@ document.addEventListener("DOMContentLoaded", () => {
             poll.remove();
         };
 
-        // store the survey id on the DOM element so it can be updated from storage events
         if (survey.id) poll.dataset.pollId = survey.id;
 
         list.appendChild(poll);

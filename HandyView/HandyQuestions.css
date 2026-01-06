@@ -1,8 +1,8 @@
 .questions-container {
-    width: 90%;              /* 90% der Bildschirmbreite */
-    max-width: 600px;        /* optional für große Bildschirme */
-    height: 80vh;            /* 80% der Bildschirmhöhe */
-    margin: 20px auto;       /* zentriert und Abstand oben/unten */
+    width: 90%;              
+    max-width: 600px;       
+    height: 80vh;          
+    margin: 20px auto;
     padding: 15px;
     background-color: #f7f7f7;
     border-radius: 10px;
@@ -20,7 +20,7 @@
 }
 
 .questions-list {
-    flex: 1;                 /* nimmt den größten Teil der Box ein */
+    flex: 1;
     overflow-y: auto;
     margin-bottom: 10px;
 }

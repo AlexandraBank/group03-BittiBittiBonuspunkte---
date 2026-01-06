@@ -21,7 +21,7 @@
         <h1>Fragen</h1>
 
         <div class="questions-list" id="questionsList">
-            <!-- Fragen werden hier gerendert -->
+
         </div>
 
         <div class="question-input-area">
@@ -78,7 +78,6 @@
         down.dataset.id = q.id;
         down.textContent = '⬇';
 
-        // kein Lösch-Button auf Handy
 
         actions.appendChild(up);
         actions.appendChild(down);
@@ -96,7 +95,6 @@
             listEl.appendChild(empty);
             return;
         }
-        // sort by votes desc then created asc
         qs.sort((a,b) => (b.votes||0) - (a.votes||0) || (a.created||0) - (b.created||0));
         qs.forEach(q => listEl.appendChild(createCard(q)));
     }
@@ -144,7 +142,6 @@
         }
     });
 
-    // sync across tabs/windows
     window.addEventListener('storage', function (e) {
         if (!e || !e.key) return;
         if (e.key === STORAGE_KEY) render();
@@ -156,7 +153,7 @@
         }
     } catch (e) {}
 
-    // initial render
+
     document.addEventListener('DOMContentLoaded', render);
     if (document.readyState === 'complete' || document.readyState === 'interactive') render();
 })();
