@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
+<meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Wartescreen</title>
   <style>
@@ -24,10 +24,29 @@
       padding: 20px;
     }
   </style>
+</style>
 </head>
 <body>
-  <div class="wait-screen">
-    Warten bis die Session beginnt
-  </div>
+
+<div class="wait-screen">
+  Warten, bis die Session beginnt...
+</div>
+
+<script>
+  // NUR FÜR DEMO: Session beim Laden zurücksetzen
+  localStorage.removeItem("sessionStarted");
+  // Falls Session schon gestartet ist
+  if (localStorage.getItem("sessionStarted") === "true") {
+    window.location.href = "HandyHome.html";
+  }
+
+  // Reagiert auf Änderungen aus ANDEREN Tabs
+  window.addEventListener("storage", (event) => {
+    if (event.key === "sessionStarted" && event.newValue === "true") {
+      window.location.href = "HandyHome.html";
+    }
+  });
+</script>
+
 </body>
 </html>

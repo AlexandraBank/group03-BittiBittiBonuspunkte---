@@ -61,6 +61,10 @@
                 <div class="button button--fill">
                     <button id="openSurveyBtn">Umfrage erstellen</button>
                 </div>
+
+                <div class="button button--fill">
+                    <button id="openSessionBtn">Session starten</button>
+                </div>
             </div>
         </div>
     </div>
@@ -294,6 +298,22 @@
         window.setParticipantCount = setParticipantCount;
 
     })();
+
+    // --- Session starten (Demo: localStorage) ---
+    document.addEventListener('DOMContentLoaded', function () {
+        const sessionBtn = document.getElementById('openSessionBtn');
+
+        if (sessionBtn) {
+            sessionBtn.addEventListener('click', function () {
+                // Session-Status setzen
+                localStorage.setItem('sessionStarted', 'true');
+
+                // Optional: visuelles Feedback
+                sessionBtn.textContent = 'Session läuft';
+                sessionBtn.disabled = true;
+            });
+        }
+    });
     </script>
 </body>
 </html>
