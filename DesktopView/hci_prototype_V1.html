@@ -19,8 +19,6 @@
         <div class="section"> 
             <div class="block questions">
                 <div>
-                    <h1>Fragen</h1>
-                    <!-- Liste der Fragen wird hier gerendert -->
                     <div id="questionsList"></div>
                 </div>
             </div>
@@ -73,7 +71,6 @@
 
     <script>
     (function () {
-        // --- Burger menu load (optional) ---
         try {
             const bm = document.getElementById('burger-menu-container');
             if (bm) {
@@ -81,11 +78,10 @@
             }
         } catch (e) {}
 
-        // --- Questions module ---
         const STORAGE_KEY = 'hci_questions_v1';
         const questionsListEl = document.getElementById('questionsList');
-        const inputEl = document.getElementById('questionInput'); // may be absent
-        const submitBtn = document.getElementById('submitQuestion'); // may be absent
+        const inputEl = document.getElementById('questionInput');
+        const submitBtn = document.getElementById('submitQuestion');
 
         function loadQuestions() {
             try {
@@ -204,7 +200,6 @@
             STORAGE_KEY
         };
 
-        // Event delegation for votes and delete
         document.addEventListener('click', function (e) {
             const up = e.target.closest('.upvote');
             const down = e.target.closest('.downvote');
@@ -222,7 +217,7 @@
             }
         });
 
-        // Submit handlers (guarded in case inputs don't exist)
+
         if (submitBtn) submitBtn.addEventListener('click', function (ev) {
             ev.preventDefault();
             if (!inputEl) return;
@@ -243,7 +238,7 @@
             if (ev.key === STORAGE_KEY) renderQuestions();
         });
 
-        // --- Popup open helper ---
+
         function openInIframe(url) {
             try {
                 var w = 720, h = 560;
@@ -265,7 +260,7 @@
             }
         }
 
-        // Bind buttons and initialize on DOM ready
+
         document.addEventListener('DOMContentLoaded', function () {
             seedIfEmpty();
             renderQuestions();
@@ -278,7 +273,7 @@
 
         });
 
-        // forward message from popup to iframe if needed
+
         window.addEventListener('message', function (ev) {
             try {
                 var data = ev.data || {};

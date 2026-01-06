@@ -67,7 +67,6 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 
-	// If rating_polls is empty but there are saved desktop surveys, import them so mobile can display them
 	function ensureImportedSurveys() {
 		try {
 			loadPolls();
@@ -87,7 +86,6 @@ document.addEventListener('DOMContentLoaded', function () {
 		} catch (e) { console.warn('Could not import savedSurveys into rating_polls', e); }
 	}
 
-	// Mobile deletion is disabled; deleting polls is handled on Desktop only.
 
 	function savePolls() {
 		try {
@@ -97,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 
-	// per-device vote tracking
+
 	function loadVotes() { try { return JSON.parse(localStorage.getItem('rating_votes')||'{}'); } catch (e) { return {}; } }
 
 	function saveVotes(votes) { try { localStorage.setItem('rating_votes', JSON.stringify(votes)); } catch (e) {} }
@@ -132,8 +130,6 @@ document.addEventListener('DOMContentLoaded', function () {
 	function renderPolls() {
 		const container = document.getElementById('polls');
 		if (!container) return;
-		// Zeige nur die klassischen Bewertungen (ja/neutral/nein) in dieser Mobile-Bewertungsansicht.
-		// Multi-Choice-Umfragen (poll.answers) werden hier nicht angezeigt.
 		container.innerHTML = '';
 		const ratingPolls = (polls || []).filter(function (p) { return !Array.isArray(p.answers) || !p.answers.length; });
 		if (!ratingPolls.length) {
@@ -175,7 +171,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 			const controls = document.createElement('div');
 			controls.className = 'poll-controls';
-			// voting controls: legacy three-choice
+
+
 			controls.appendChild(createVoteButton('😊', 'Stimme: positiv', function () { votePoll(poll.id, 'yes'); }));
 			controls.appendChild(createVoteButton('😐', 'Stimme: neutral', function () { votePoll(poll.id, 'neutral'); }));
 			controls.appendChild(createVoteButton('☹️', 'Stimme: negativ', function () { votePoll(poll.id, 'no'); }));
@@ -195,7 +192,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		const p = polls.find(function (x) { return x.id === id; });
 		if (!p) return;
 		if (hasVoted(id)) { alert('Du hast bereits abgestimmt.'); return; }
-		// compute previous positive percentage to detect crossing the 50% threshold
+
 		var prevYes = p.yes || 0;
 		var prevNeutral = p.neutral || 0;
 		var prevNo = p.no || 0;
@@ -210,7 +207,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		savePolls();
 		renderPolls();
 
-		// after voting, check new percentage and show hamster if crossed >50%
+
 		var newYes = p.yes || 0;
 		var newNeutral = p.neutral || 0;
 		var newNo = p.no || 0;
@@ -240,7 +237,6 @@ document.addEventListener('DOMContentLoaded', function () {
 		overlay.id = 'hamsterOverlay';
 		overlay.className = 'hamster-overlay';
 
-		// use absolute root path so the image resolves correctly from any page/popup
 		var imgUrl = '/pictures/BittiHamster.jpg';
 
 		var img = new Image();
@@ -427,7 +423,6 @@ document.addEventListener('DOMContentLoaded', function () {
 	showSuggestionsBtn.addEventListener('click', toggleSuggestions);
 
 
-	// on load, ensure polls imported from savedSurveys if needed, then load and render
 	ensureImportedSurveys();
 	loadPolls();
 	renderPolls();

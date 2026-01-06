@@ -63,11 +63,11 @@
     display: flex;
     flex-direction: column;
     gap: 1px;
-    max-height: 100%; /* Setze eine maximale Höhe für das Umfrage-Container */
-    overflow-y: auto; /* Aktiviere scrollen, wenn der Inhalt die maximale Höhe überschreitet */
-    border: 1px solid #ccc; /* Optional: füge einen Rahmen hinzu */
-    padding: 10px; /* Optional: füge etwas Padding hinzu */
-    border-radius: 5px; /* Optional: füge einen abgerundeten Rand hinzu */
+    max-height: 100%; 
+    overflow-y: auto;
+    border: 1px solid #ccc; 
+    padding: 10px;
+    border-radius: 5px;
 }
 
 .answer-row {
