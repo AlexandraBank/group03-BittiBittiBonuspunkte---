@@ -31,6 +31,21 @@
     </div>
 
 <script>
+    window.USER_TYPE = 'student';
+    const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
+
+    function loadVotes() {
+        try {
+            return JSON.parse(localStorage.getItem(VOTE_KEY)) || {};
+        } catch {
+            return {};
+        }
+    }
+
+    function saveVotes(votes) {
+        localStorage.setItem(VOTE_KEY, JSON.stringify(votes));
+    }
+
 (function () {
     const STORAGE_KEY = 'hci_questions_v1';
     const listEl = document.getElementById('questionsList');
@@ -78,10 +93,18 @@
         down.dataset.id = q.id;
         down.textContent = '⬇';
 
-
         actions.appendChild(up);
         actions.appendChild(down);
         card.appendChild(actions);
+
+        const votesState = loadVotes();           
+        const currentVote = votesState[q.id];
+
+        up.classList.remove('active');
+        down.classList.remove('active');
+
+        if (currentVote === 'up') up.classList.add('active');
+        if (currentVote === 'down') down.classList.add('active');
 
         return card;
     }
@@ -108,16 +131,43 @@
         render();
     }
 
-    function updateVotes(id, delta) {
+    function updateVotes(questionId, delta) {
+        const votesState = loadVotes();
         const qs = loadQuestions();
-        const idx = qs.findIndex(x => x.id === id);
+        const idx = qs.findIndex(x => x.id === questionId);
         if (idx === -1) return;
-        qs[idx].votes = (qs[idx].votes || 0) + delta;
+
+        const currentVote = votesState[questionId];
+
+        if (delta > 0) {
+            if (currentVote === 'up') {
+                qs[idx].votes -= 1;
+                votesState[questionId] = null;
+            } else if (currentVote === 'down') {
+                qs[idx].votes += 2;
+                votesState[questionId] = 'up';
+            } else {
+                qs[idx].votes += 1;
+                votesState[questionId] = 'up';
+            }
+        } else if (delta < 0) {
+            if (currentVote === 'down') {
+                qs[idx].votes += 1;
+                votesState[questionId] = null;
+            } else if (currentVote === 'up') {
+                qs[idx].votes -= 2;
+                votesState[questionId] = 'down';
+            } else {
+                qs[idx].votes -= 1;
+                votesState[questionId] = 'down';
+            }
+        }
+
+        saveVotes(votesState);
         saveQuestions(qs);
         render();
     }
 
-    // events
     listEl.addEventListener('click', function (e) {
         const up = e.target.closest('.upvote');
         const down = e.target.closest('.downvote');

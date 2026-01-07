@@ -174,3 +174,16 @@
     color: white;
     font-weight: bold;
 }
+
+.upvote.active,
+.downvote.active {
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 4px;
+}
+
+.upvote:disabled,
+.downvote:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}

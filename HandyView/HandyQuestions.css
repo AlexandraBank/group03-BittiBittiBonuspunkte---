@@ -88,3 +88,17 @@
 .input-submit:hover {
     background-color: #0056b3;
 }
+
+.upvote.active,
+.downvote.active {
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 4px;
+}
+
+.upvote:disabled,
+.downvote:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+

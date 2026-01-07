@@ -69,246 +69,208 @@
 
     <div id="surveyContainer"></div>
 
-    <script>
-    (function () {
+<script>
+window.USER_TYPE = 'prof';
+const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
+
+(function () {
+    const STORAGE_KEY = 'hci_questions_v1';
+    const questionsListEl = document.getElementById('questionsList');
+    const inputEl = document.getElementById('questionInput');
+    const submitBtn = document.getElementById('submitQuestion');
+
+    function loadQuestions() {
         try {
-            const bm = document.getElementById('burger-menu-container');
-            if (bm) {
-                fetch('burgerMenu.html').then(r => r.text()).then(html => { bm.innerHTML = html; }).catch(()=>{});
-            }
-        } catch (e) {}
-
-        const STORAGE_KEY = 'hci_questions_v1';
-        const questionsListEl = document.getElementById('questionsList');
-        const inputEl = document.getElementById('questionInput');
-        const submitBtn = document.getElementById('submitQuestion');
-
-        function loadQuestions() {
-            try {
-                const raw = localStorage.getItem(STORAGE_KEY);
-                return raw ? JSON.parse(raw) : [];
-            } catch (e) {
-                console.warn('Fehler beim Laden der Fragen:', e);
-                return [];
-            }
+            const raw = localStorage.getItem(STORAGE_KEY);
+            return raw ? JSON.parse(raw) : [];
+        } catch {
+            return [];
         }
+    }
 
-        function saveQuestions(list) {
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-            } catch (e) {
-                console.warn('Fehler beim Speichern der Fragen:', e);
-            }
+    function saveQuestions(list) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    }
+
+    function loadVotes() {
+        try { return JSON.parse(localStorage.getItem(VOTE_KEY)) || {}; } 
+        catch { return {}; }
+    }
+
+    function saveVotes(votes) {
+        localStorage.setItem(VOTE_KEY, JSON.stringify(votes));
+    }
+
+    function seedIfEmpty() {
+        const q = loadQuestions();
+        if (!q || q.length === 0) {
+            const sample = [{
+                id: Date.now().toString(36) + Math.random().toString(36).slice(2,8),
+                text: 'Was sind Metaphern?',
+                votes: 3,
+                created: Date.now()
+            }];
+            saveQuestions(sample);
         }
+    }
 
-        function seedIfEmpty() {
-            const q = loadQuestions();
-            if (!q || q.length === 0) {
-                const sample = [{ id: (Date.now().toString(36) + Math.random().toString(36).slice(2,8)), text: 'Was sind Metaphern?', votes: 3, created: Date.now() }];
-                saveQuestions(sample);
-            }
-        }
+    function createCardElement(q) {
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        card.dataset.id = q.id;
 
-        function createCardElement(q) {
-            const card = document.createElement('div');
-            card.className = 'question-card';
-            card.dataset.id = q.id;
+        const meta = document.createElement('p');
+        meta.className = 'question-meta';
+        meta.textContent = 'Ein Student fragt:';
+        card.appendChild(meta);
 
-            const meta = document.createElement('p');
-            meta.className = 'question-meta';
-            meta.textContent = 'Ein Student fragt:';
-            card.appendChild(meta);
+        const txt = document.createElement('p');
+        txt.className = 'question-text';
+        txt.textContent = q.text;
+        card.appendChild(txt);
 
-            const txt = document.createElement('p');
-            txt.className = 'question-text';
-            txt.textContent = q.text;
-            card.appendChild(txt);
+        const actions = document.createElement('div');
+        actions.className = 'question-actions';
 
-            const actions = document.createElement('div');
-            actions.className = 'question-actions';
+        const upBtn = document.createElement('button');
+        upBtn.className = 'upvote';
+        upBtn.dataset.id = q.id;
+        upBtn.innerHTML = '⬆ <span>' + (q.votes || 0) + '</span>';
 
-            const upBtn = document.createElement('button');
-            upBtn.className = 'upvote';
-            upBtn.dataset.id = q.id;
-            upBtn.dataset.votes = (q.votes || 0);
-            upBtn.innerHTML = '⬆ <span>' + (q.votes || 0) + '</span>';
+        const downBtn = document.createElement('button');
+        downBtn.className = 'downvote';
+        downBtn.dataset.id = q.id;
+        downBtn.textContent = '⬇';
 
-            const downBtn = document.createElement('button');
-            downBtn.className = 'downvote';
-            downBtn.dataset.id = q.id;
-            downBtn.textContent = '⬇';
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'delete';
+        deleteBtn.dataset.id = q.id;
+        deleteBtn.textContent = 'Löschen';
 
-            const deleteBtn = document.createElement('button');
-            deleteBtn.className = 'delete';
-            deleteBtn.dataset.id = q.id;
-            deleteBtn.textContent = 'Löschen';
+        actions.appendChild(upBtn);
+        actions.appendChild(downBtn);
+        actions.appendChild(deleteBtn);
+        card.appendChild(actions);
 
-            actions.appendChild(upBtn);
-            actions.appendChild(downBtn);
-            actions.appendChild(deleteBtn);
-            card.appendChild(actions);
+        const votesState = loadVotes();
+        const currentVote = votesState[q.id];
 
-            return card;
-        }
+        upBtn.classList.remove('active');
+        downBtn.classList.remove('active');
+        if (currentVote === 'up') upBtn.classList.add('active');
+        if (currentVote === 'down') downBtn.classList.add('active');
 
-        function renderQuestions() {
-            const questions = loadQuestions();
-            if (!questionsListEl) return;
-            questionsListEl.innerHTML = '';
-            questions.sort((a,b) => (b.votes||0) - (a.votes||0) || (a.created||0) - (b.created||0));
-            questions.forEach(q => {
-                const card = createCardElement(q);
-                questionsListEl.appendChild(card);
-            });
-            const parent = questionsListEl.parentElement;
-            if (parent) parent.scrollTop = parent.scrollHeight;
-        }
+        return card;
+    }
 
-        function addQuestionText(text) {
-            if (!text || !text.trim()) return;
-            const questions = loadQuestions();
-            const item = { id: Date.now().toString(36) + Math.random().toString(36).slice(2,8), text: text.trim(), votes: 0, created: Date.now() };
-            questions.push(item);
-            saveQuestions(questions);
-            renderQuestions();
-        }
+    function renderQuestions() {
+        const questions = loadQuestions();
+        if (!questionsListEl) return;
+        questionsListEl.innerHTML = '';
+        questions.sort((a,b) => (b.votes||0) - (a.votes||0) || (a.created||0) - (b.created||0));
+        questions.forEach(q => questionsListEl.appendChild(createCardElement(q)));
+    }
 
-        function updateVotes(id, delta) {
-            const questions = loadQuestions();
-            const idx = questions.findIndex(q => q.id === id);
-            if (idx === -1) return;
-            questions[idx].votes = (questions[idx].votes || 0) + delta;
-            saveQuestions(questions);
-            renderQuestions();
-        }
-
-        function deleteQuestion(id) {
-            if (!id) return;
-            let questions = loadQuestions();
-            const idx = questions.findIndex(q => q.id === id);
-            if (idx === -1) return;
-            questions.splice(idx, 1);
-            saveQuestions(questions);
-            renderQuestions();
-        }
-
-        window.Questions = {
-            getAll: () => loadQuestions(),
-            add: (text) => addQuestionText(text),
-            updateVotes: (id, delta) => updateVotes(id, delta),
-            remove: (id) => deleteQuestion(id),
-            STORAGE_KEY
+    function addQuestion(text) {
+        if (!text || !text.trim()) return;
+        const questions = loadQuestions();
+        const item = { 
+            id: Date.now().toString(36) + Math.random().toString(36).slice(2,8), 
+            text: text.trim(), 
+            votes: 0, 
+            created: Date.now() 
         };
+        questions.push(item);
+        saveQuestions(questions);
+        renderQuestions();
+    }
 
-        document.addEventListener('click', function (e) {
+    function updateVotes(id, delta) {
+        const votesState = loadVotes();
+        const questions = loadQuestions();
+        const idx = questions.findIndex(q => q.id === id);
+        if (idx === -1) return;
+
+        const currentVote = votesState[id];
+
+        // Upvote
+        if (delta > 0) {
+            if (currentVote === 'up') { // zurücknehmen
+                questions[idx].votes -= 1;
+                votesState[id] = undefined;
+            } else if (currentVote === 'down') { // wechseln
+                questions[idx].votes += 2;
+                votesState[id] = 'up';
+            } else { // normal
+                questions[idx].votes += 1;
+                votesState[id] = 'up';
+            }
+        }
+        // Downvote
+        else if (delta < 0) {
+            if (currentVote === 'down') { // zurücknehmen
+                questions[idx].votes += 1;
+                votesState[id] = undefined;
+            } else if (currentVote === 'up') { // wechseln
+                questions[idx].votes -= 2;
+                votesState[id] = 'down';
+            } else { // normal
+                questions[idx].votes -= 1;
+                votesState[id] = 'down';
+            }
+        }
+
+        saveVotes(votesState);
+        saveQuestions(questions);
+        renderQuestions();
+    }
+
+    function deleteQuestion(id) {
+        let questions = loadQuestions();
+        const idx = questions.findIndex(q => q.id === id);
+        if (idx === -1) return;
+        questions.splice(idx, 1);
+        saveQuestions(questions);
+        renderQuestions();
+    }
+
+    // --- Event Listener ---
+    if (questionsListEl) {
+        questionsListEl.addEventListener('click', function(e) {
             const up = e.target.closest('.upvote');
             const down = e.target.closest('.downvote');
             const del = e.target.closest('.delete');
-
-            if (up) {
-                const id = up.dataset.id;
-                updateVotes(id, +1);
-            } else if (down) {
-                const id = down.dataset.id;
-                updateVotes(id, -1);
-            } else if (del) {
-                const id = del.dataset.id;
-                deleteQuestion(id);
-            }
+            if (up) updateVotes(up.dataset.id, +1);
+            else if (down) updateVotes(down.dataset.id, -1);
+            else if (del) deleteQuestion(del.dataset.id);
         });
+    }
 
-
-        if (submitBtn) submitBtn.addEventListener('click', function (ev) {
-            ev.preventDefault();
-            if (!inputEl) return;
-            const text = inputEl.value;
-            if (!text || !text.trim()) return;
-            addQuestionText(text);
+    if (submitBtn) {
+        submitBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            addQuestion(inputEl.value);
             inputEl.value = '';
         });
+    }
 
-        if (inputEl) inputEl.addEventListener('keypress', function (e) {
+    if (inputEl) {
+        inputEl.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                submitBtn && submitBtn.click();
+                submitBtn.click();
             }
         });
+    }
 
-        window.addEventListener('storage', function (ev) {
-            if (ev.key === STORAGE_KEY) renderQuestions();
-        });
-
-
-        function openInIframe(url) {
-            try {
-                var w = 720, h = 560;
-                var dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : screen.left;
-                var dualScreenTop = window.screenTop !== undefined ? window.screenTop : screen.top;
-                var width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
-                var height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
-                var left = ((width / 2) - (w / 2)) + dualScreenLeft;
-                var top = ((height / 2) - (h / 2)) + dualScreenTop;
-                var features = 'scrollbars=yes,resizable=yes,toolbar=no,location=no,status=no,menubar=no,width=' + w + ',height=' + h + ',top=' + top + ',left=' + left;
-                var popup = window.open(url || 'bewertung_popup.html', 'bewertungPopup', features);
-                if (popup && popup.focus) popup.focus();
-                if (!popup) {
-                    try { window.open(url || 'bewertung_popup.html', '_blank'); } catch (e) { window.location.href = url || 'bewertung_popup.html'; }
-                }
-            } catch (err) {
-                console.warn('Konnte Popup-Fenster nicht öffnen, navigiere zur Popup-Seite:', err);
-                try { window.open(url || 'bewertung_popup.html', '_blank'); } catch (e) { window.location.href = url || 'bewertung_popup.html'; }
-            }
-        }
-
-
-        document.addEventListener('DOMContentLoaded', function () {
-            seedIfEmpty();
-            renderQuestions();
-
-            const btn = document.getElementById('openBewertungBtn');
-            if (btn) btn.addEventListener('click', function (e) {
-                e.preventDefault();
-                openInIframe('bewertung_popup.html');
-            });
-
-        });
-
-
-        window.addEventListener('message', function (ev) {
-            try {
-                var data = ev.data || {};
-                if (data && data.type === 'pollSaved') {
-                    var iframe = document.querySelector('iframe[title="Bewertungstool"]');
-                    if (iframe && iframe.contentWindow) {
-                        try { iframe.contentWindow.postMessage({ type: 'reloadPolls' }, '*'); } catch (e) {}
-                    }
-                }
-            } catch (err) { console.warn('Fehler forwarding pollSaved:', err); }
-        });
-
-        function setParticipantCount(n) {
-            var el = document.getElementById('participantCount');
-            if (el) el.textContent = String(n);
-        }
-        window.setParticipantCount = setParticipantCount;
-
-    })();
-
-    // --- Session starten (Demo: localStorage) ---
-    document.addEventListener('DOMContentLoaded', function () {
-        const sessionBtn = document.getElementById('openSessionBtn');
-
-        if (sessionBtn) {
-            sessionBtn.addEventListener('click', function () {
-                // Session-Status setzen
-                localStorage.setItem('sessionStarted', 'true');
-
-                // Optional: visuelles Feedback
-                sessionBtn.textContent = 'Session läuft';
-                sessionBtn.disabled = true;
-            });
-        }
+    window.addEventListener('storage', function(e) {
+        if (e.key === STORAGE_KEY) renderQuestions();
     });
-    </script>
+
+    // Initial
+    seedIfEmpty();
+    renderQuestions();
+})();
+</script>   
 </body>
 </html>
