@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>WebSSO Login Service</title>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+        <link rel="stylesheet" href="StudIPAnmeldescreen.css">
+    </head>
+    <body>
+        <main class="main">
+            <header>
+                <img class="main-logo" src="../pictures/luh_logo.svg" alt="Leibniz Universität Hannover" />
+                
+                    <h1>Anmelden bei Stud.IP</h1>
+            </header>
+            
+            <section class="sp-details">
+                <form action="/idp/profile/SAML2/Redirect/SSO?execution=e1s2" method="post">
+    <input type="hidden" name="csrf_token" value="_831ff9d23ebf8bdd220b4349737050efeece79f5" />
+
+                    
+                        <img class="service-logo" src= "https&#x3a;&#x2f;&#x2f;mdv.aai.dfn.de&#x2f;media&#x2f;logos&#x2f;e159&#x2f;logo.svg" alt="Stud.IP">
+                        <p>Stud.IP der Leibniz Universit&auml;t Hannover</p>
+                    
+
+                    <label for="username">LUH-ID</label>
+                    <input type="text" id="username" name="j_username"
+                        value="" />
+                        
+                    <label for="password">WebSSO-Passwort</label>
+                    <input type="password" id="password" name="j_password" value="" />
+    
+                                            <input type="checkbox" name="donotcache" value="1" id="donotcache" />
+                        <label for="donotcache">Anmeldung nicht speichern</label>
+    
+                    <input id="_shib_idp_revokeConsent" type="checkbox" name="_shib_idp_revokeConsent" value="true" />
+                    <label for="_shib_idp_revokeConsent">Zustimmung zur Datenübermittlung für den Dienst aufheben.</label>
+    
+                    <div class="grid">
+                        <div class="grid-item">
+                            <button type="submit" name="_eventId_proceed" onClick="event.preventDefault();
+                                this.innerText='Anmeldung läuft, bitte warten...';
+                                window.location.href='hci_prototype_V1.html';"
+                                >Anmelden</button>
+                        </div>
+                    </div>
+                </form>
+    
+                <ul>
+                    <li><a href="https://login.uni-hannover.de/ui/services">Am IDM-Accountmanager anmelden und Passwort für WebSSO ändern</a></li>
+                    <li><a href="https://www.luis.uni-hannover.de/support.html">Sie benötigen Hilfe?</a></li>
+                </ul>
+            </section>
+        </main>
+<footer>
+<!-- footer -->
+<div class="cc">
+<ul class="footer">
+<li><a href="https://www.luis.uni-hannover.de/de/ueber-uns/kontakt" class="c-button c-button--footer">
+		<span class="u-icon u-icon--envelop5">Kontakt</span>
+	</a></li>
+<li>© <script nonce="_c3d992e6e112f8809ecbc19ae3009306">document.write(new Date().getFullYear());
+</script><noscript>2024</noscript>:&nbsp; <a href="https://www.uni-hannover.de/de/copyright/">Leibniz Universität Hannover</a></li>
+  <li><a href="https://www.luis.uni-hannover.de/de/impressum" title="Impressum">Impressum</a></li>
+  <li><a href="https://www.uni-hannover.de/de/datenschutzerklaerung/" title="Datenschutz">Datenschutz</a></li>
+</ul>
+</div>
+</footer>
+
+
+        <script nonce="_c3d992e6e112f8809ecbc19ae3009306">
+        <!--
+        const ufield = document.getElementById('username');
+        const pfield = document.getElementById('password');
+        if (ufield.value.trim().length == 0) {
+            ufield.focus();
+        } else {
+            pfield.focus();
+        }
+        // -->
+        </script>
+        
+     </body>
+</html
