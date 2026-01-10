@@ -67,25 +67,6 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 
-	function ensureImportedSurveys() {
-		try {
-			loadPolls();
-			if (polls && polls.length) return;
-			var raw = localStorage.getItem('savedSurveys');
-			if (!raw) return;
-			var saved = JSON.parse(raw || '[]');
-			if (!Array.isArray(saved) || !saved.length) return;
-			polls = [];
-			saved.forEach(function (s) {
-				var id = s.id || ('survey_' + Date.now());
-				var answers = Array.isArray(s.answers) ? s.answers.map(function (a) { return { text: a, count: 0 }; }) : [];
-				if (!answers.length) return;
-				polls.unshift({ id: id, text: s.question || s.text || '', answers: answers, createdAt: Date.now() });
-			});
-			if (polls.length) savePolls();
-		} catch (e) { console.warn('Could not import savedSurveys into rating_polls', e); }
-	}
-
 
 	function savePolls() {
 		try {
@@ -423,7 +404,6 @@ document.addEventListener('DOMContentLoaded', function () {
 	showSuggestionsBtn.addEventListener('click', toggleSuggestions);
 
 
-	ensureImportedSurveys();
 	loadPolls();
 	renderPolls();
 

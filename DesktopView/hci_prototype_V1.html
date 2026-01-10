@@ -18,6 +18,8 @@
     <div class="flexbox screen"> 
         <div class="section"> 
             <div class="block questions">
+                <h2> Fragen der Studenten</h2>
+                <p> Hier können Sie auf Fragen der Studenten eingehen. </p>
                 <div>
                     <div id="questionsList"></div>
                 </div>
@@ -28,7 +30,11 @@
             <div class="block"> 
                 <iframe src="bewertungtool.html" style="width:100%;height:100%;border:0;" title="Bewertungstool"></iframe>
             </div>
-            <div class="block"> </div>
+            <div class="block"> 
+                <div class="survey-list">
+
+                </div>
+            </div>
         </div>
 
         <div class="section sidebar"> 
@@ -67,7 +73,7 @@
         </div>
     </div>
 
-    <div id="surveyContainer"></div>
+    <div id="surveyContainer"> </div>
 
 <script>
 window.USER_TYPE = 'prof';
@@ -270,7 +276,10 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
     // Initial
     seedIfEmpty();
     renderQuestions();
+    
 })();
-</script>   
+
+</script> 
+  
 </body>
 </html>
