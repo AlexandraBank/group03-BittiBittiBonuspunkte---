@@ -9,6 +9,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!container || !openBtn) return;
 
     loadSavedSurveys();
+    updateLastPollStatesFromLocal();
+    updatePollsFromVotes();
 
     openBtn.addEventListener("click", () => {
 
@@ -149,6 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         surveys.forEach(s => addSurveyPoll(s));
         updateLastPollStatesFromLocal();
+        updatePollsFromVotes();
     }
 
     function addSurveyPoll(survey) {
@@ -205,6 +208,56 @@ document.addEventListener("DOMContentLoaded", () => {
         if (survey.id) poll.dataset.pollId = survey.id;
 
         list.appendChild(poll);
+    }
+
+    function updatePollsFromVotes() {
+        const rawVotes = localStorage.getItem('rating_votes');
+        const votes = rawVotes ? JSON.parse(rawVotes) : {};
+
+        const polls = document.querySelectorAll(".survey-list .poll");
+        
+        polls.forEach(poll => {
+            const pollId = poll.dataset.pollId;
+            if(!pollId) return;
+        
+            const fillElems = poll.querySelectorAll(".poll-bar-fill");
+            const labelElems = poll.querySelectorAll(".poll-bar-label");
+
+            const pollVotes = Object.keys(votes).filter(voteKey => voteKey && voteKey.indexOf(pollId) !== -1);
+
+            const totalVotes = pollVotes.length;
+            const answerCounts = {};
+
+            pollVotes.forEach(voteKey => {
+                const raw = votes[voteKey];
+                let answerIndex = NaN;
+                if (typeof raw === 'number') {
+                    answerIndex = raw;
+                } else if (typeof raw === 'string') {
+                    if (raw.indexOf(':') !== -1) {
+                        answerIndex = parseInt(raw.split(':')[1], 10);
+                    } else {
+                        answerIndex = parseInt(raw, 10);
+                    }
+                }
+                if (!isNaN(answerIndex)) {
+                    answerCounts[answerIndex] = (answerCounts[answerIndex] || 0) + 1;
+                }
+            });
+
+            Array.from(fillElems).forEach((fillElem, index) => {
+                const ansVotes = answerCounts[index] || 0;
+                const percent = totalVotes ? Math.round((ansVotes / totalVotes) * 100) : 0;
+                fillElem.style.width = `${percent}%`;
+            });
+
+            Array.from(labelElems).forEach((labelElem, index) => {
+                const ansVotes = answerCounts[index] || 0;
+                const percent = totalVotes ? Math.round((ansVotes / totalVotes) * 100) : 0;
+                const baseText = labelElem.textContent.replace(/\s*\([^\)]*\)\s*$/, '').trim();
+                labelElem.textContent = `${baseText} (${percent}%)`;
+            });
+        });
     }
 
     // Listen for changes to shared rating_polls so votes from mobile are reflected
