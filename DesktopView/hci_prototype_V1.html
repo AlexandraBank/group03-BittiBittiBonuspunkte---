@@ -151,7 +151,7 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete';
         deleteBtn.dataset.id = q.id;
-        deleteBtn.textContent = 'Löschen';
+        deleteBtn.textContent = '🗑';
 
         actions.appendChild(upBtn);
         actions.appendChild(downBtn);
@@ -248,7 +248,11 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
             const del = e.target.closest('.delete');
             if (up) updateVotes(up.dataset.id, +1);
             else if (down) updateVotes(down.dataset.id, -1);
-            else if (del) deleteQuestion(del.dataset.id);
+            else if (del) {
+                if (confirm('Diese Frage wirklich löschen?')){
+                    deleteQuestion(del.dataset.id);
+                }
+            }
         });
     }
 

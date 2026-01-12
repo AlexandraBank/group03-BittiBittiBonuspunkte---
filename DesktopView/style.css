@@ -119,8 +119,9 @@
 }
 
 .question-card {
-    background-color: rgb(230, 230, 230);
+    background-color: #fff;
     border-radius: 6px;
+    border:1px solid #e6e6e6;
     padding: 12px;
     margin-bottom: 12px;
 }
@@ -134,18 +135,21 @@
 }
 
 .question-text {
-    font-size: 16px;
+    font-size: 16.5px;
     font-weight: bold;
     margin: 5px 0;
+    margin-bottom: 10px;
 }
 
 .question-actions {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
     gap: 8px;
 }
 
 .question-actions button {
-    background-color: white;
+    background-color: #e6e6e6;
     border: none;
     border-radius: 4px;
     padding: 4px 8px;
@@ -170,6 +174,14 @@
     border-radius: 4px;
     color: white;
     font-weight: bold;
+}
+
+.upvote, .downvote {
+    display:inline-block;
+}
+
+.delete {
+    margin-left:auto;
 }
 
 .upvote.active,
