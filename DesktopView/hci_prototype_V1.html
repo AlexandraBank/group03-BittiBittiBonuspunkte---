@@ -286,59 +286,53 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
  
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // Open Bewertung popup (falls Popup geblockt, auf Seite navigieren)
-    var btn = document.getElementById('openBewertungBtn');
-    if (btn) btn.addEventListener('click', function (e) {
-        e.preventDefault();
-        try {
-            var w = 720, h = 560;
-            var dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : screen.left;
-            var dualScreenTop = window.screenTop !== undefined ? window.screenTop : screen.top;
-            var width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
-            var height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
-            var left = ((width / 2) - (w / 2)) + dualScreenLeft;
-            var top = ((height / 2) - (h / 2)) + dualScreenTop;
-            var features = 'scrollbars=yes,resizable=yes,toolbar=no,location=no,status=no,menubar=no,width=' + w + ',height=' + h + ',top=' + top + ',left=' + left;
-            var popup = window.open('bewertung_popup.html', 'bewertungPopup', features);
-            if (popup && popup.focus) popup.focus();
-            if (!popup) {
-                try { window.open('bewertung_popup.html', '_blank'); } catch (e) { window.location.href = 'bewertung_popup.html'; }
-            }
-        } catch (err) {
-            try { window.open('bewertung_popup.html', '_blank'); } catch (e) { window.location.href = 'bewertung_popup.html'; }
-        }
-    });
 
-    // Start session: prompt for participant count and set the counter in the sidebar
-    // Also notify other clients (mobile) so they can leave the wait screen.
-    var sess = document.getElementById('openSessionBtn');
-    if (sess) sess.addEventListener('click', function (e) {
-        e.preventDefault();
-        var n = prompt('Teilnehmerzahl eingeben', '1');
-        if (n !== null) {
-            var num = parseInt(n, 10);
+    const sessionBtn = document.getElementById('openSessionBtn');
+    const participantCountEl = document.getElementById('participantCount');
+
+    function setSessionStartedUI() {
+        if (!sessionBtn) return;
+        sessionBtn.textContent = 'Session gestartet';
+        sessionBtn.disabled = true;
+    }
+
+    // ✅ Beim Laden prüfen, ob Session schon läuft
+    if (localStorage.getItem('sessionStarted') === 'true') {
+        setSessionStartedUI();
+    }
+
+    // ▶ Session starten
+    if (sessionBtn) {
+        sessionBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            const n = prompt('Teilnehmerzahl eingeben', '1');
+            if (n === null) return;
+
+            let num = parseInt(n, 10);
             if (isNaN(num) || num < 0) num = 0;
-            var el = document.getElementById('participantCount');
-            if (el) el.textContent = String(num);
 
-            try {
-                // persist session state so other tabs detect it
-                localStorage.setItem('sessionStarted', 'true');
-            } catch (err) {
-                console.warn('Could not write sessionStarted to localStorage', err);
+            if (participantCountEl) {
+                participantCountEl.textContent = String(num);
             }
 
-            // Broadcast via BroadcastChannel for immediate notification where available
+            // Session speichern
+            localStorage.setItem('sessionStarted', 'true');
+
+            // UI ändern
+            setSessionStartedUI();
+
+            // Andere Tabs / Geräte informieren
             try {
                 if (window.BroadcastChannel) {
-                    var ch = new BroadcastChannel('hci_channel');
+                    const ch = new BroadcastChannel('hci_channel');
                     ch.postMessage({ type: 'sessionStarted', value: true });
                     ch.close();
                 }
             } catch (err) {
-                // ignore
+                console.warn(err);
             }
-        }
-    });
+        });
+    }
 });
 </script>
