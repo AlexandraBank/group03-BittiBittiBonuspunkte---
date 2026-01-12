@@ -279,12 +279,39 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
     
 })();
 
-</script> 
-  
-</body>
-</html>
- 
-<script>
+const bewertungBtn = document.getElementById('openBewertungBtn');
+
+if (bewertungBtn) {
+    bewertungBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const w = 720;
+        const h = 560;
+
+        // Position & Größe des aktuellen Browserfensters
+        const dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : window.screenX;
+        const dualScreenTop  = window.screenTop  !== undefined ? window.screenTop  : window.screenY;
+
+        const width  = window.innerWidth  || document.documentElement.clientWidth;
+        const height = window.innerHeight || document.documentElement.clientHeight;
+
+        // Zentrierung relativ zum Browserfenster
+        const left = dualScreenLeft + (width - w) / 2;
+        const top  = dualScreenTop  + (height - h) / 2;
+
+        const popup = window.open(
+            'bewertung_popup.html',
+            'bewertungPopup',
+            `width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=yes`
+        );
+
+        // Fallback falls Popup blockiert wird
+        if (!popup) {
+            window.location.href = 'bewertung_popup.html';
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
 
     const sessionBtn = document.getElementById('openSessionBtn');
@@ -335,4 +362,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
-</script>
+
+</script> 
+  
+</body>
+</html>
