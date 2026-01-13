@@ -255,7 +255,7 @@
   border-radius: 12px;
 }
 
-.poll-stats { font-size: 13px; color: #444; margin-left: 6px; }
+.poll-stats { font-size: 13px; color: #444; }
 
 .poll-del {
   position: absolute;
