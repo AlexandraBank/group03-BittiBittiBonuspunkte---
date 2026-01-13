@@ -15,7 +15,7 @@
 </head>
 <body>
     <div id="burger-menu-container">
-        <div class="burger-menu">
+        <div class="burger-menu" title="Wechseln Sie die Veranstaltung">
             <input type="checkbox" id="menu-toggle" />
             <label for="menu-toggle" class="menu-icon">
                 <span></span>
@@ -72,25 +72,28 @@
 
         <div class="section sidebar"> 
             <div class="flexbox verticalFlex">
-                <div class="block qrCode">
+            
+                <div class="block qrCode" title="QR-Code für Studenten, über den man der Session beitreten kann">
                     <div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-start;height:auto;font-size:16px;color:#333;padding-top:10px;">
                         <div style="margin-bottom:8px;">Scan mich zum Beitreten</div>
                         <img src="../pictures/QR.png" alt="AR" id="arImage" style="max-width:100%;height:auto;display:block;margin:0 auto;" />
                     </div>
                 </div>
 
+                
+                
                 <div>
-                    <div class="members">
-                        <div class="participant">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5z" fill="#444"/>
-                                <path d="M4 20c0-2.761 4-4 8-4s8 1.239 8 4v1H4v-1z" fill="#444"/>
-                            </svg>
-                            <span id="participantCount">1</span>
+                    <div>
+                        <div class="members" title="Anzahl der Teilnehmer">
+                            <div class="participant">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                    <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5z" fill="#444"/>
+                                    <path d="M4 20c0-2.761 4-4 8-4s8 1.239 8 4v1H4v-1z" fill="#444"/>
+                                </svg>
+                                <span id="participantCount">1</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div>
                     <div class="button button--fill">
                         <button id="openBewertungBtn">Bewertung erstellen</button>
                     </div>
@@ -174,16 +177,19 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
 
         const upBtn = document.createElement('button');
         upBtn.className = 'upvote';
+        upBtn.title = 'Frage upvoten';
         upBtn.dataset.id = q.id;
         upBtn.innerHTML = '⬆ <span>' + (q.votes || 0) + '</span>';
 
         const downBtn = document.createElement('button');
         downBtn.className = 'downvote';
+        downBtn.title = 'Frage downvoten';
         downBtn.dataset.id = q.id;
         downBtn.textContent = '⬇';
 
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete';
+        deleteBtn.title = 'Frage löschen';
         deleteBtn.dataset.id = q.id;
         deleteBtn.textContent = '🗑';
 
@@ -358,6 +364,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function setSessionStartedUI() {
         if (!sessionBtn) return;
         sessionBtn.textContent = 'Session gestartet';
+        sessionBtn.title = 'Die Session ist gestartet, User können bereits beitreten.'
         sessionBtn.disabled = true;
     }
 
