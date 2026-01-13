@@ -14,7 +14,40 @@
     <script src="Umfrage.js" defer></script>
 </head>
 <body>
-    <div id="burger-menu-container"></div>
+    <div id="burger-menu-container">
+        <div class="burger-menu">
+            <input type="checkbox" id="menu-toggle" />
+            <label for="menu-toggle" class="menu-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+            <nav class="menu">
+            <ul>
+                <li class="has-submenu">
+                <a href="#">Vorlesungen</a>
+                <div class="submenu submenu-vorlesungen">
+                <ul>
+                    <li><a href="hci_prototype_V1.html">Vorlesung 1</a></li>
+                    <li><a href="hci_prototype_V1.html">Vorlesung 2</a></li>
+                    <li><a href="hci_prototype_V1.html">Vorlesung 3</a></li>
+                </ul>
+                </div>
+                </li>
+                <li class="has-submenu">
+                    <a href="#">Übungen</a>
+                    <div class="submenu submenu-uebungen">
+                        <ul>
+                            <li><a href="hci_prototype_V1.html">Übung 1</a></li>
+                            <li><a href="hci_prototype_V1.html">Übung 2</a></li>
+                            <li><a href="hci_prototype_V1.html">Übung 3</a></li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+            </nav>
+        </div>
+    </div>
     <div class="flexbox screen"> 
         <div class="section"> 
             <div class="block questions">
