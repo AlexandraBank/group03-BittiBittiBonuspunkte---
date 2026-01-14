@@ -144,7 +144,7 @@
                 qs[idx].votes -= 1;
                 votesState[questionId] = null;
             } else if (currentVote === 'down') {
-                qs[idx].votes += 2;
+                qs[idx].votes += 1;
                 votesState[questionId] = 'up';
             } else {
                 qs[idx].votes += 1;
@@ -155,7 +155,7 @@
                 qs[idx].votes += 1;
                 votesState[questionId] = null;
             } else if (currentVote === 'up') {
-                qs[idx].votes -= 2;
+                qs[idx].votes -= 1;
                 votesState[questionId] = 'down';
             } else {
                 qs[idx].votes -= 1;
