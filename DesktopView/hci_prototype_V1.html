@@ -149,18 +149,6 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
         localStorage.setItem(VOTE_KEY, JSON.stringify(votes));
     }
 
-    function seedIfEmpty() {
-        const q = loadQuestions();
-        if (!q || q.length === 0) {
-            const sample = [{
-                id: Date.now().toString(36) + Math.random().toString(36).slice(2,8),
-                text: 'Was sind Metaphern?',
-                votes: 3,
-                created: Date.now()
-            }];
-            saveQuestions(sample);
-        }
-    }
 
     function createCardElement(q) {
         const card = document.createElement('div');
@@ -186,11 +174,7 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
         upBtn.dataset.id = q.id;
         upBtn.innerHTML = '⬆ <span>' + (q.votes || 0) + '</span>';
 
-        const downBtn = document.createElement('button');
-        downBtn.className = 'downvote';
-        downBtn.title = 'Frage downvoten';
-        downBtn.dataset.id = q.id;
-        downBtn.textContent = '⬇';
+        
 
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete';
@@ -199,17 +183,15 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
         deleteBtn.textContent = '🗑';
 
         actions.appendChild(upBtn);
-        actions.appendChild(downBtn);
+
         actions.appendChild(deleteBtn);
         card.appendChild(actions);
 
         const votesState = loadVotes();
         const currentVote = votesState[q.id];
 
-        upBtn.classList.remove('active');
-        downBtn.classList.remove('active');
+        upBtn.classList.remove('active');;
         if (currentVote === 'up') upBtn.classList.add('active');
-        if (currentVote === 'down') downBtn.classList.add('active');
 
         return card;
     }
@@ -244,32 +226,6 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
 
         const currentVote = votesState[id];
 
-        // Upvote
-        /*if (delta > 0) {
-            if (currentVote === 'up') { // zurücknehmen
-                questions[idx].votes -= 1;
-                votesState[id] = undefined;
-            } else if (currentVote === 'down') { // wechseln
-                questions[idx].votes += 2;
-                votesState[id] = 'up';
-            } else { // normal
-                questions[idx].votes += 1;
-                votesState[id] = 'up';
-            }
-        }
-        // Downvote
-        else if (delta < 0) {
-            if (currentVote === 'down') { // zurücknehmen
-                questions[idx].votes += 1;
-                votesState[id] = undefined;
-            } else if (currentVote === 'up') { // wechseln
-                questions[idx].votes -= 2;
-                votesState[id] = 'down';
-            } else { // normal
-                questions[idx].votes -= 1;
-                votesState[id] = 'down';
-            }
-        }*/
 
         saveVotes(votesState);
         saveQuestions(questions);
@@ -289,10 +245,8 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
     if (questionsListEl) {
         questionsListEl.addEventListener('click', function(e) {
             const up = e.target.closest('.upvote');
-            const down = e.target.closest('.downvote');
             const del = e.target.closest('.delete');
             if (up) updateVotes(up.dataset.id, +1);
-            else if (down) updateVotes(down.dataset.id, -1);
             else if (del) {
                 if (confirm('Diese Frage wirklich löschen?')){
                     deleteQuestion(del.dataset.id);
@@ -323,7 +277,6 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
     });
 
     // Initial
-    seedIfEmpty();
     renderQuestions();
     
 })();
