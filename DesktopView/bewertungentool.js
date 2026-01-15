@@ -208,20 +208,25 @@ document.addEventListener('DOMContentLoaded', function () {
 		var overlay = document.createElement('div');
 		overlay.id = 'hamsterOverlay';
 		overlay.className = 'hamster-overlay';
-		var img = document.createElement('img');
-		img.src = '../pictures/BittiHamster.jpg';
-		img.alt = 'Bitti Hamster';
+
+		var imgUrl = '/pictures/BittiHamster.jpg';
+
+		var img = new Image();
 		img.className = 'hamster-image';
+		img.alt = 'Bitti Hamster';
 
-
-		img.addEventListener('error', function () {
-			overlay.innerHTML = '<div class="hamster-emoji">🐹</div>';
+		img.onload = function () {
+			overlay.appendChild(img);
+			document.body.appendChild(overlay);
 			setTimeout(function () { try { overlay.remove(); } catch (e) {} }, 3000);
-		});
+		};
+		img.onerror = function () {
+			overlay.innerHTML = '<div class="hamster-emoji">🐹</div>';
+			document.body.appendChild(overlay);
+			setTimeout(function () { try { overlay.remove(); } catch (e) {} }, 3000);
+		};
 
-		overlay.appendChild(img);
-		document.body.appendChild(overlay);
-		setTimeout(function () { try { overlay.remove(); } catch (e) {} }, 3000);
+		img.src = imgUrl;
 	}
 
 	window.openPopup = function () {
