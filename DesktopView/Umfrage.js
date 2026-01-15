@@ -28,7 +28,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     <button class="btn small" id="addAnswerBtn">+ Antwort hinzufügen</button>
 
-            
+                    <div class="controls">
+                        <button class="btn primary" id="confirmSurveyBtn">Bestätigen</button>
+                        <button class="btn" id="cancelSurveyBtn">Abbrechen</button>
+                    </div>
+
+
                 </div>
             </div>
         `;
