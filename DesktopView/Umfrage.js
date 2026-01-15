@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     <div class="controls">
                         <button class="btn primary" id="confirmSurveyBtn">Bestätigen</button>
-                        <button class="btn" id="cancelSurveyBtn">Abbrechen</button>
+                         <button class="btn" id="cancelSurveyBtn">Abbrechen</button>
                     </div>
 
 
