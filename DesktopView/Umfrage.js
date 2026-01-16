@@ -199,7 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 `).join("")}
             </div>
-
+                    <div class="poll-stats">Stimmen: 0</div>
             <div class="poll-controls">
                 <div class="poll-del">
                     <button title="Umfrage löschen">🗑</button>
@@ -298,6 +298,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 const baseText = labelElem.textContent.replace(/\s*\([^\)]*\)\s*$/, '').trim();
                 labelElem.textContent = `${baseText} (${percent}%)`;
             });
+
+            const statsElem = poll.querySelector(".poll-stats");
+            if (statsElem) {
+                statsElem.textContent = `Stimmen: ${totalVotes}`;
+            }
         });
     }
 
