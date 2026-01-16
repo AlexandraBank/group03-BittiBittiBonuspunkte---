@@ -151,6 +151,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const oldList = target.querySelector(".survey-list");
         if (oldList) oldList.remove();
 
+        const oldMsg = target.querySelector(".survey-empty-text");
+        if (oldMsg) oldMsg.remove();
+
+        if(surveys.length == 0) {
+            const p = document.createElement("p");
+            p.className = "survey-empty-text";
+            p.textContent = "Keine Umfragen vorhanden. Erstelle eine neue Umfrage über den Button rechts.";
+            target.appendChild(p);
+            return;
+        }
+
         surveys.forEach(s => addSurveyPoll(s));
         updateLastPollStatesFromLocal();
         updatePollsFromVotes();
@@ -161,6 +172,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const target =
             document.querySelectorAll(".section")[1]
             .querySelectorAll(".block")[1];
+
+        const emptyMsg = target.querySelector(".survey-empty-text");
+        if (emptyMsg) emptyMsg.remove();
 
         let list = target.querySelector(".survey-list");
         if (!list) {
@@ -195,6 +209,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         poll.querySelector(".poll-del button").onclick = () => {
             if (!confirm('Diese Umfrage wirklich löschen?')) return;
+
             removeSurvey(survey.question);
             try {
                 const pollsKey = 'rating_polls';
@@ -202,10 +217,27 @@ document.addEventListener("DOMContentLoaded", () => {
                 var polls = raw ? JSON.parse(raw) : [];
                 polls = polls.filter(p => p.id !== survey.id);
                 localStorage.setItem(pollsKey, JSON.stringify(polls));
-                try { if (window.BroadcastChannel) new BroadcastChannel('rating_polls').postMessage('updated'); } catch (e) {}
+                try { 
+                    if (window.BroadcastChannel) new BroadcastChannel('rating_polls').postMessage('updated'); 
+                } catch (e) {}
             } catch (e) {}
+
             poll.remove();
-        };
+
+            const list = target.querySelector(".survey-list");
+            if (!list || list.children.length === 0) {
+                const p = document.createElement("p");
+                p.className = "survey-empty-text";
+                p.textContent = "Keine Umfragen vorhanden. Erstelle eine neue Umfrage über den Button rechts.";
+
+                if (list) {
+                    list.parentNode.insertBefore(p, list);
+                } else {
+                    target.insertBefore(p, target.firstChild);
+                }
+            }
+            };
+
 
         if (survey.id) poll.dataset.pollId = survey.id;
 
