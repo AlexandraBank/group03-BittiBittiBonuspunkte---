@@ -12,6 +12,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="Umfrage.js" defer></script>
+    <script src="bewertungentool.js" defer></script>
 </head>
 <body>
     <div id="burger-menu-container">
@@ -288,38 +289,249 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
 
 const bewertungBtn = document.getElementById('openBewertungBtn');
 
+
 if (bewertungBtn) {
     bewertungBtn.addEventListener('click', function (e) {
         e.preventDefault();
 
-        const w = 720;
-        const h = 560;
+        // Falls Popup schon existiert → nicht erneut erzeugen
+        if (document.getElementById('bewertungPopup')) return;
 
-        // Position & Größe des aktuellen Browserfensters
-        const dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : window.screenX;
-        const dualScreenTop  = window.screenTop  !== undefined ? window.screenTop  : window.screenY;
+        // Overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'popup-rating';
+        overlay.id = 'bewertungPopup';
 
-        const width  = window.innerWidth  || document.documentElement.clientWidth;
-        const height = window.innerHeight || document.documentElement.clientHeight;
+        // Popup-Inhalt
+        overlay.innerHTML = `
+            <div class="popup-content">
+                <button class="close-btn" id="closePopupBtn">&times;</button>
+                <h2>Bewertung erstellen</h2>
 
-        // Zentrierung relativ zum Browserfenster
-        const left = dualScreenLeft + (width - w) / 2;
-        const top  = dualScreenTop  + (height - h) / 2;
+                <p class = "was">Gib eine Frage für die Bewertung ein:</p>
+                <textarea id="ratingText" rows="7"></textarea>
 
-        const popup = window.open(
-            'bewertung_popup.html',
-            'bewertungPopup',
-            `width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=yes`
-        );
+                <div class="controls">
 
-        // Fallback falls Popup blockiert wird
-        if (!popup) {
-            window.location.href = 'bewertung_popup.html';
+                    <div class="dropdown">
+                        <button id="showSuggestionsBtn" class="btn" aria-expanded="true" aria-controls="suggestions">
+                            <span class="btn-label">Vorschläge</span>
+                            <span class="chevron" aria-hidden="true">▾</span>
+                        </button>
+
+                    <div id="suggestions" class="dropdown-menu" role="menu" aria-hidden="true" style="display: none;">
+                    <div id="suggestionsList" class="suggestions-list"></div>
+                    <div class="dropdown-footer">
+                        <button id="manageBtn" class="btn small">Vorschläge bearbeiten</button>
+                    </div>
+                    <div id="managePanel" class="manage-panel" aria-hidden="true">
+                        <input id="newSuggestionInput" type="text" placeholder="Neue Vorschlag hinzufügen..." />
+                        <button id="addSuggestionBtn" class="btn small">Hinzufügen</button>
+                        <ul id="manageList" class="manage-list"></ul>
+                    </div>
+                </div>
+            </div>
+                    
+
+                    
+                    <button class="btn primary" id="saveBtn">Speichern</button>
+                </div>
+          
+            </div>
+        `;
+
+
+        const saveBtn = overlay.querySelector('#saveBtn');  // Dein Speichern-Button
+        const textarea = overlay.querySelector('#ratingText'); // Textarea
+        let polls = [];
+        const pollsKey = 'rating_polls';
+
+
+        function loadPolls() {
+            try {
+                const raw = localStorage.getItem(pollsKey);
+                polls = raw ? JSON.parse(raw) : [];
+            } catch (e) {
+                polls = [];
+            }
         }
+
+
+        function savePolls() {
+            try {
+                localStorage.setItem(pollsKey, JSON.stringify(polls));
+            } catch (e) {
+                console.warn('Polls konnten nicht gespeichert werden', e);
+            }
+        }
+
+
+        function renderPolls() {
+            const container = document.getElementById('polls'); 
+            if (!container) return;
+            container.innerHTML = '';
+            if (!polls.length) {
+                container.textContent = 'Keine Fragen zum Bewerten vorhanden.';
+                return;
+            }
+            polls.forEach(poll => {
+                const div = document.createElement('div');
+                div.className = 'poll';
+                div.textContent = poll.text;
+                container.appendChild(div);
+            });
+        }
+
+        function saveRating() {
+            const value = textarea.value.trim();
+            if (!value) {
+                alert('Bitte gib einen Text ein oder wähle einen Vorschlag.');
+                textarea.focus();
+                return;
+            }
+
+            const id = 'poll_' + Date.now();
+            const poll = { id: id, text: value, yes: 0, no: 0, neutral: 0, createdAt: Date.now() };
+
+            polls.unshift(poll);
+            savePolls();
+            renderPolls();
+
+            overlay.remove();
+        }
+
+        if (saveBtn) {
+            saveBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                saveRating();
+            });
+        }
+
+
+        loadPolls();
+        renderPolls();
+
+        
+
+        // Suggestions laden und initialisieren
+        let suggestions = [];
+        const storageKey = 'rating_suggestions';
+        const suggestionsListEl = overlay.querySelector('#suggestionsList');
+        
+        // Vorschläge aus localStorage oder suggestions.json laden
+        (function loadSuggestions() {
+            const stored = localStorage.getItem(storageKey);
+            if (stored) {
+                try {
+                    const parsed = JSON.parse(stored);
+                    if (Array.isArray(parsed) && parsed.length) {
+                        suggestions = parsed;
+                        renderSuggestions();
+                        return;
+                    }
+                } catch (e) {
+                    console.warn('Lokale Vorschläge konnten nicht gelesen werden.', e);
+                }
+            }
+
+            fetch('suggestions.json')
+                .then(function (res) {
+                    if (!res.ok) throw new Error('Network response was not ok');
+                    return res.json();
+                })
+                .then(function (data) {
+                    if (Array.isArray(data) && data.length) {
+                        suggestions = data;
+                        renderSuggestions();
+                    }
+                })
+                .catch(function (err) {
+                    console.warn('Konnte suggestions.json nicht laden, verwende Standard-Vorschläge.', err);
+                    suggestions = ['Frage 1 zu verständlich?', 'Tempo der Vorlesung okay?', 'Verständnis von Konzept X?'];
+                    renderSuggestions();
+                });
+        })();
+
+        function renderSuggestions() {
+            if (!suggestionsListEl) return;
+            suggestionsListEl.innerHTML = '';
+            suggestions.forEach(function (s) {
+                const item = document.createElement('div');
+                item.className = 'suggestion-item';
+                item.setAttribute('role', 'menuitem');
+                item.tabIndex = 0;
+                item.textContent = s;
+                item.addEventListener('click', function () {
+                    const textarea = overlay.querySelector('#ratingText');
+                    if (textarea) textarea.value = s;
+                });
+                suggestionsListEl.appendChild(item);
+            });
+        }
+
+        document.body.appendChild(overlay);
+
+
+        // Klick auf Hintergrund schließt Popup
+        overlay.addEventListener('click', (ev) => {
+            if (ev.target === overlay) {
+                overlay.remove();
+            }
+        });
+
+        function hideSuggestions() {
+            const suggestionsEl = document.getElementById('suggestions');
+            if (!suggestionsEl) return; // nichts tun, falls Element nicht existiert
+
+            const showSuggestionsBtn = document.getElementById('showSuggestionsBtn');
+
+            suggestionsEl.style.display = 'none';
+            suggestionsEl.setAttribute('aria-hidden', 'true');
+
+            if (showSuggestionsBtn) {
+                showSuggestionsBtn.setAttribute('aria-expanded', 'false');
+                const chevron = showSuggestionsBtn.querySelector('.chevron');
+                if (chevron) chevron.textContent = '▾';
+            }
+        }
+
+        function showSuggestions() {
+            const suggestionsEl = document.getElementById('suggestions');
+            if (!suggestionsEl) return; // nichts tun, falls Element nicht existiert
+
+            const showSuggestionsBtn = document.getElementById('showSuggestionsBtn');
+
+            suggestionsEl.style.display = 'block';
+            suggestionsEl.setAttribute('aria-hidden', 'false');
+
+            if (showSuggestionsBtn) {
+                showSuggestionsBtn.setAttribute('aria-expanded', 'false');
+                const chevron = showSuggestionsBtn.querySelector('.chevron');
+                if (chevron) chevron.textContent = '▴'; 
+            }
+        }
+
+        const primaryBtn = document.querySelector('.btn');
+
+        primaryBtn.addEventListener('click', function(e) {
+            const suggestionsEl = document.getElementById('suggestions');
+            if (suggestionsEl.style.display === 'block') hideSuggestions(); else showSuggestions();
+        });
+
+        const exitBtn = document.getElementById("closePopupBtn");
+
+        exitBtn.addEventListener('click', function(e) {
+            overlay.remove();
+        });       
     });
 }
 
+
+
+
 document.addEventListener('DOMContentLoaded', function () {
+
+
 
     const sessionBtn = document.getElementById('openSessionBtn');
     const participantCountEl = document.getElementById('participantCount');
@@ -337,6 +549,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ▶ Session starten
+    
     if (sessionBtn) {
         sessionBtn.addEventListener('click', function (e) {
             e.preventDefault();
@@ -369,9 +582,12 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+
 });
 
 </script> 
+
+<script src="bewertungentool.js"></script>
   
 </body>
 </html>

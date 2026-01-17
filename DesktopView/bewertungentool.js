@@ -393,6 +393,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		});
 	}
 	showSuggestionsBtn.addEventListener('click', toggleSuggestions);
+	
 
 
 	loadPolls();

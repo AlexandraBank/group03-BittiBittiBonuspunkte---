@@ -1,7 +1,8 @@
 * {
     box-sizing: border-box;
-    font-family: "Plus Jakarta Sans", sans-serif;
+    font-family: "Plus Jakarta Sans", sans-serif;  
 }
+
 
 .burger {
     width: 75px;
@@ -247,4 +248,37 @@ p {
 button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
+}
+
+.popup-overlay {
+    height:100%;
+    width: 100%;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.popup-rating {
+    height:100%;
+    width: 100%;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.test{
+    width: 100px;
+    height: 100px;
+}
+
+.was {
+    margin-bottom: 20px;
 }

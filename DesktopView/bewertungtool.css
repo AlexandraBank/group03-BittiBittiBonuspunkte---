@@ -2,6 +2,7 @@
   font-family: "Plus Jakarta Sans", sans-serif;
 }
 
+
 .popup-overlay {
   display: none; 
   position: fixed;
@@ -11,6 +12,7 @@
   align-items: center;
   z-index: 1000;
 }
+
 
 .popup-content {
   background: #fff;
@@ -50,6 +52,7 @@
   display: flex;
   gap: 8px;
   align-items: center;
+  justify-content: space-between;
   margin-bottom: 12px;
 }
 
@@ -76,14 +79,14 @@
   top: 110%;
   left: 0;
   background: white;
-  min-width: 260px;
-  max-width: 360px;
+  min-width: 230px;
+  max-width: 320px;
   border: 1px solid #ddd;
   box-shadow: 0 4px 12px rgba(0,0,0,0.12);
   border-radius: 6px;
   padding: 8px;
   display: none;
-  z-index: 2000;
+  z-index: 20000;
   gap: 6px;
 }
 
