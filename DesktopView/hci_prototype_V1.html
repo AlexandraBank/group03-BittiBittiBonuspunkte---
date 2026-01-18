@@ -103,18 +103,19 @@
 
                 
                 
-                <div>
                     <div>
-                        <div class="members" title="Anzahl der Teilnehmer">
-                            <div class="participant">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                    <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5z" fill="#444"/>
-                                    <path d="M4 20c0-2.761 4-4 8-4s8 1.239 8 4v1H4v-1z" fill="#444"/>
-                                </svg>
-                                <span id="participantCount">1</span>
+                        <div>
+                            <div class="members" title="Anzahl der Teilnehmer">
+                                <div class="participant-label" style="font-size:13px;font-weight:600;margin-bottom:6px;color:#fbf7f7;">aktuelle Teilnehmeranzahl:</div>
+                                <div class="participant">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                        <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5z" fill="#444"/>
+                                        <path d="M4 20c0-2.761 4-4 8-4s8 1.239 8 4v1H4v-1z" fill="#444"/>
+                                    </svg>
+                                    <span id="participantCount">1</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
                     <div class="button button--fill">
                         <button id="openBewertungBtn">Bewertung erstellen</button>
                     </div>
@@ -243,7 +244,7 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
             questions = questions.filter(q => !q.isAnswered);
         } else if (filter === 'Schon beantwortet') {
             questions = questions.filter(q => q.isAnswered);
-        } else if (filter === 'Alle Fragen ohne Reden, alles komplett') {
+        } else if (filter === 'Alle Fragen') {
         questions = questions;
         }
 
