@@ -428,6 +428,24 @@ document.addEventListener('DOMContentLoaded', function () {
 		} catch (err) {  }
 	});
 
+// Listen for in-page BroadcastChannel messages (fast cross-tab/device notifications)
+try {
+	if (window.BroadcastChannel) {
+		const ch = new BroadcastChannel('hci_channel');
+		ch.addEventListener('message', function (ev) {
+			try {
+				const data = ev.data || {};
+				if (data && data.type === 'sessionStarted') {
+					// nothing here - session handling is elsewhere
+				}
+				if (data && data.type === 'hamster') {
+					try { showHamster(); } catch (e) { }
+				}
+			} catch (e) { }
+		});
+	}
+} catch (e) { }
+
 
 	popup.addEventListener('click', function (e) {
 		if (e.target === popup) closePopup();

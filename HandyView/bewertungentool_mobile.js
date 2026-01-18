@@ -198,6 +198,14 @@ document.addEventListener('DOMContentLoaded', function () {
 		try {
 			if (prevYesPct <= 50 && newYesPct > 50) {
 				showHamster();
+		
+				try {
+					if (window.BroadcastChannel) {
+						var ch = new BroadcastChannel('hci_channel');
+						ch.postMessage({ type: 'hamster', pollId: id });
+						ch.close();
+					}
+				} catch (err) { }
 			}
 		} catch (e) { }
 	}
@@ -206,9 +214,38 @@ document.addEventListener('DOMContentLoaded', function () {
 	function voteAnswer(id, answerIndex) {
 		const p = polls.find(function (x) { return x.id === id; });
 		if (!p || !Array.isArray(p.answers) || !p.answers[answerIndex]) return;
+
+		var prevTotal = p.answers.reduce(function (acc, a) { return acc + (a.count || 0); }, 0) || 0;
+		var prevMax = 0;
+		for (var i = 0; i < p.answers.length; i++) {
+			var pct = prevTotal ? Math.round(((p.answers[i].count || 0) / prevTotal) * 100) : 0;
+			if (pct > prevMax) prevMax = pct;
+		}
+
 		p.answers[answerIndex].count = (p.answers[answerIndex].count || 0) + 1;
+
 		savePolls();
 		renderPolls();
+
+		var newTotal = p.answers.reduce(function (acc, a) { return acc + (a.count || 0); }, 0) || 1;
+		var newMax = 0;
+		for (var j = 0; j < p.answers.length; j++) {
+			var pctj = Math.round(((p.answers[j].count || 0) / newTotal) * 100);
+			if (pctj > newMax) newMax = pctj;
+		}
+
+		try {
+			if (prevMax <= 50 && newMax > 50) {
+				showHamster();
+				try {
+					if (window.BroadcastChannel) {
+						var ch2 = new BroadcastChannel('hci_channel');
+						ch2.postMessage({ type: 'hamster', pollId: id });
+						ch2.close();
+					}
+				} catch (err) {}
+			}
+		} catch (e) {}
 	}
 
 
