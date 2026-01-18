@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const buttonHTML = removable 
                 ? '<button class="remove-answer">✕</button>'
-                : '<div style="min-width:24px;"></div>'; // leerer Platzhalter
+                : '<div style="min-width:24px;"></div>'; 
 
             row.innerHTML = `
                 <input type="text" class="answer-input" value="${value}">
@@ -209,17 +209,21 @@ document.addEventListener("DOMContentLoaded", () => {
         poll.className = "poll";
 
         const percent = Math.floor(100 / survey.answers.length);
+        const colorClasses = ['bar-yes', 'bar-neutral', 'bar-no'];
 
         poll.innerHTML = `
             <div class="poll-question">${survey.question}</div>
 
             <div class="poll-bars">
-                ${survey.answers.map(a => `
-                    <div class="poll-bar">
+                ${survey.answers.map((a, i) => {
+                    const colorClass = colorClasses[i % colorClasses.length];
+                    return `
+                    <div class="poll-bar ${colorClass}">
                         <div class="poll-bar-fill" style="width:${percent}%"></div>
                         <div class="poll-bar-label">${a} (${percent}%)</div>
                     </div>
-                `).join("")}
+                `
+                }).join("")}
             </div>
                     <div class="poll-stats">Stimmen: 0</div>
             <div class="poll-controls">

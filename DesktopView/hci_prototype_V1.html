@@ -301,7 +301,7 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
         renderQuestions();
     }
 
-    // --- Event Listener ---
+   
     if (questionsListEl) {
         questionsListEl.addEventListener('click', function(e) {
             const up = e.target.closest('.upvote');
@@ -347,7 +347,7 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
         if (e.key === STORAGE_KEY) renderQuestions();
     });
 
-    // Initial
+  
     renderQuestions();
     
 })();
@@ -359,15 +359,15 @@ if (bewertungBtn) {
     bewertungBtn.addEventListener('click', function (e) {
         e.preventDefault();
 
-        // Falls Popup schon existiert → nicht erneut erzeugen
+  
         if (document.getElementById('bewertungPopup')) return;
 
-        // Overlay
+
         const overlay = document.createElement('div');
         overlay.className = 'popup-rating';
         overlay.id = 'bewertungPopup';
 
-        // Popup-Inhalt
+ 
         overlay.innerHTML = `
             <div class="popup-content">
                 <button class="close-btn" id="closePopupBtn">&times;</button>
@@ -406,8 +406,8 @@ if (bewertungBtn) {
         `;
 
 
-        const saveBtn = overlay.querySelector('#saveBtn');  // Dein Speichern-Button
-        const textarea = overlay.querySelector('#ratingText'); // Textarea
+        const saveBtn = overlay.querySelector('#saveBtn');  
+        const textarea = overlay.querySelector('#ratingText'); 
         let polls = [];
         const pollsKey = 'rating_polls';
 
@@ -478,12 +478,12 @@ if (bewertungBtn) {
 
         
 
-        // Suggestions laden und initialisieren
+      
         let suggestions = [];
         const storageKey = 'rating_suggestions';
         const suggestionsListEl = overlay.querySelector('#suggestionsList');
         
-        // Vorschläge aus localStorage oder suggestions.json laden
+      
         (function loadSuggestions() {
             const stored = localStorage.getItem(storageKey);
             if (stored) {
@@ -539,7 +539,7 @@ if (bewertungBtn) {
         document.body.appendChild(overlay);
 
 
-        // Klick auf Hintergrund schließt Popup
+       
         overlay.addEventListener('click', (ev) => {
             if (ev.target === overlay) {
                 overlay.remove();
@@ -548,7 +548,7 @@ if (bewertungBtn) {
 
         function hideSuggestions() {
             const suggestionsEl = document.getElementById('suggestions');
-            if (!suggestionsEl) return; // nichts tun, falls Element nicht existiert
+            if (!suggestionsEl) return; 
 
             const showSuggestionsBtn = document.getElementById('showSuggestionsBtn');
 
@@ -564,7 +564,7 @@ if (bewertungBtn) {
 
         function showSuggestions() {
             const suggestionsEl = document.getElementById('suggestions');
-            if (!suggestionsEl) return; // nichts tun, falls Element nicht existiert
+            if (!suggestionsEl) return;
 
             const showSuggestionsBtn = document.getElementById('showSuggestionsBtn');
 
@@ -611,12 +611,12 @@ document.addEventListener('DOMContentLoaded', function () {
         sessionBtn.disabled = true;
     }
 
-    // ✅ Beim Laden prüfen, ob Session schon läuft
+   
     if (localStorage.getItem('sessionStarted') === 'true') {
         setSessionStartedUI();
     }
 
-    // ▶ Session starten
+  
     
     if (sessionBtn) {
         sessionBtn.addEventListener('click', function (e) {
@@ -632,13 +632,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 participantCountEl.textContent = String(num);
             }
 
-            // Session speichern
+        
             localStorage.setItem('sessionStarted', 'true');
 
-            // UI ändern
+            
             setSessionStartedUI();
 
-            // Andere Tabs / Geräte informieren
+            
             try {
                 if (window.BroadcastChannel) {
                     const ch = new BroadcastChannel('hci_channel');
