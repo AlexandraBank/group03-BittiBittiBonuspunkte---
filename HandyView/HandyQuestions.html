@@ -125,7 +125,7 @@
     function addQuestion(text) {
         if (!text || !text.trim()) return;
         const qs = loadQuestions();
-        const item = { id: Date.now().toString(36) + Math.random().toString(36).slice(2,8), text: text.trim(), votes: 0, created: Date.now() };
+        const item = { id: Date.now().toString(36) + Math.random().toString(36).slice(2,8), text: text.trim(), votes: 0, created: Date.now(), isAnswered: false};
         qs.push(item);
         saveQuestions(qs);
         render();

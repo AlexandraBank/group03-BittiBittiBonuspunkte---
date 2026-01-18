@@ -136,7 +136,13 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
     function loadQuestions() {
         try {
             const raw = localStorage.getItem(STORAGE_KEY);
-            return raw ? JSON.parse(raw) : [];
+            const questions = raw ? JSON.parse(raw) : [];
+
+            return questions.map(q => ({
+                isAnswered:false,
+                ...q
+            }))
+
         } catch {
             return [];
         }
@@ -161,6 +167,10 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
         card.className = 'question-card';
         card.dataset.id = q.id;
 
+        if(q.isAnswered){
+            card.classList.add('answered');
+        }
+
         const meta = document.createElement('p');
         meta.className = 'question-meta';
         meta.textContent = 'Ein Student fragt:';
@@ -180,8 +190,17 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
         upBtn.dataset.id = q.id;
         upBtn.innerHTML = '⬆ <span>' + (q.votes || 0) + '</span>';
 
-        
+        const answerBtn = document.createElement('button');
+        answerBtn.className = 'answer';
+        answerBtn.title = 'als beantwortet markieren';
+        answerBtn.dataset.id = q.id;
+        answerBtn.textContent = 'als beantwortet markieren';
 
+        answerBtn.textContent = q.isAnswered
+            ? 'Antwort zurücknehmen'
+            : 'als beantwortet markieren';
+
+        
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete';
         deleteBtn.title = 'Frage löschen';
@@ -189,6 +208,8 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
         deleteBtn.textContent = '🗑';
 
         actions.appendChild(upBtn);
+
+        actions.appendChild(answerBtn);
 
         actions.appendChild(deleteBtn);
         card.appendChild(actions);
@@ -247,12 +268,28 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
         renderQuestions();
     }
 
+    function toggleAnswered(id) {
+        const questions = loadQuestions();
+        const idx = questions.findIndex(q => q.id === id);
+        if (idx === -1) return;
+
+        questions[idx].isAnswered = !questions[idx].isAnswered;
+
+        saveQuestions(questions);
+        renderQuestions();
+    }
+
     // --- Event Listener ---
     if (questionsListEl) {
         questionsListEl.addEventListener('click', function(e) {
             const up = e.target.closest('.upvote');
             const del = e.target.closest('.delete');
+            const answer = e.target.closest('.answer');
+
             if (up) updateVotes(up.dataset.id, +1);
+            else if (answer) {
+                toggleAnswered(answer.dataset.id);
+            }
             else if (del) {
                 if (confirm('Diese Frage wirklich löschen?')){
                     deleteQuestion(del.dataset.id);
