@@ -141,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(surveys));
     }
 
-    // keep previous poll state to detect crossings (e.g. an answer passing 50%)
+   
     var lastPollStates = {};
 
     function updateLastPollStatesFromLocal() {
@@ -177,10 +177,17 @@ document.addEventListener("DOMContentLoaded", () => {
         if (oldMsg) oldMsg.remove();
 
         if(surveys.length == 0) {
+            let list = target.querySelector('.survey-list');
+            if (!list) {
+                list = document.createElement('div');
+                list.className = 'survey-list';
+                target.appendChild(list);
+            }
+            list.innerHTML = '';
             const p = document.createElement("p");
             p.className = "survey-empty-text";
             p.textContent = "Keine Umfragen vorhanden. Erstelle eine neue Umfrage über den Button rechts.";
-            target.appendChild(p);
+            list.appendChild(p);
             return;
         }
 
@@ -233,7 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
         `;
 
-        poll.querySelector(".poll-del button").onclick = () => {
+            poll.querySelector(".poll-del button").onclick = () => {
             if (!confirm('Diese Umfrage wirklich löschen?')) return;
 
             removeSurvey(survey.question);
@@ -250,18 +257,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
             poll.remove();
 
-            const list = target.querySelector(".survey-list");
-            if (!list || list.children.length === 0) {
-                const p = document.createElement("p");
-                p.className = "survey-empty-text";
-                p.textContent = "Keine Umfragen vorhanden. Erstelle eine neue Umfrage über den Button rechts.";
-
-                if (list) {
-                    list.parentNode.insertBefore(p, list);
-                } else {
-                    target.insertBefore(p, target.firstChild);
+                const list = target.querySelector('.survey-list');
+                if (!list) {
+                    const newList = document.createElement('div');
+                    newList.className = 'survey-list';
+                    target.appendChild(newList);
+                    const p = document.createElement('p');
+                    p.className = 'survey-empty-text';
+                    p.textContent = 'Keine Umfragen vorhanden. Erstelle eine neue Umfrage.';
+                    newList.appendChild(p);
+                } else if (list.children.length === 0) {
+                    list.innerHTML = '';
+                    const p = document.createElement('p');
+                    p.className = 'survey-empty-text';
+                    p.textContent = 'Keine Umfragen vorhanden. Erstelle eine neue Umfrage über den Button rechts.';
+                    list.appendChild(p);
                 }
-            }
             };
 
 
@@ -283,7 +294,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const fillElems = poll.querySelectorAll(".poll-bar-fill");
             const labelElems = poll.querySelectorAll(".poll-bar-label");
 
-            // collect all vote keys that reference this pollId
+         
             const pollVoteKeys = Object.keys(votes).filter(voteKey => voteKey && voteKey.indexOf(pollId) !== -1);
 
             const answerCounts = {};
@@ -295,10 +306,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (typeof raw === 'number') {
                     answerIndex = raw;
                 } else if (typeof raw === 'string') {
-                    // formats like "2", "user:2", "pollId:user:2" etc.
+
                     if (raw.indexOf(':') !== -1) {
                         const parts = raw.split(':');
-                        // try last part as index
+
                         answerIndex = parseInt(parts[parts.length - 1], 10);
                     } else {
                         answerIndex = parseInt(raw, 10);
@@ -332,31 +343,31 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Listen for changes to shared rating_polls so votes from mobile are reflected
+  
     window.addEventListener('storage', function (e) {
         try {
             if (!e || !e.key) return;
 
             if (e.key === 'rating_polls') {
                 var polls = JSON.parse(e.newValue || '[]');
-                // update any poll elements that match by id
+
                 polls.forEach(function (p) {
                     if (!p.id) return;
                     var el = document.querySelector('.survey-list .poll[data-poll-id="' + p.id + '"]');
                     if (el) {
-                        // find bar labels and fills and update counts if present
+
                         var fills = el.querySelectorAll('.poll-bar-fill');
                         var labels = el.querySelectorAll('.poll-bar-label');
-                        // support two shapes: legacy yes/no/neutral OR new multi-answer polls with p.answers array
+
                         if (Array.isArray(p.answers) && p.answers.length) {
                             var total = p.answers.reduce(function (acc, a) { return acc + (a.count || 0); }, 0) || 1;
-                            // update fills/labels per answer
+    
                             for (var i = 0; i < p.answers.length; i++) {
                                 var ans = p.answers[i];
                                 if (fills[i]) fills[i].style.width = Math.round(((ans.count||0)/total)*100) + '%';
                                 if (labels[i]) labels[i].textContent = (ans.text || '').split(' ')[0] + ' ' + (ans.count||0) + ' (' + Math.round(((ans.count||0)/total)*100) + '%)';
                             }
-                            // detect if any answer crossed the 50% positive threshold (from <=50 to >50)
+
                             try {
                                 var maxPct = 0;
                                 for (var j = 0; j < p.answers.length; j++) {
@@ -386,7 +397,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             }
 
-            // handle direct vote updates -> refresh counts/labels/fills
+
             if (e.key === 'rating_votes') {
                 try { updatePollsFromVotes(); } catch (err) { console.warn('updatePollsFromVotes error', err); }
             }
