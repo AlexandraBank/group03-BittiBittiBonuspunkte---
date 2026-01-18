@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <button class="close-btn" id="closeSurveyBtn">&times;</button>
                     <h2>Umfrage erstellen</h2>
 
-                    <p class="was">Gib eine Frage und mindestens 2 Antworten ein:</p>
+                    <p class="was">Gib eine Frage ein:</p>
                     <textarea id="surveyQuestion" rows="5"></textarea>
 
                     <p class="was">Antwortmöglichkeiten:</p>
@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     
                     
 
-                    <button class="btn small" id="addAnswerBtn">+ Antwort hinzufügen</button>
+                    <button class="btn small border" id="addAnswerBtn">+ Antwort hinzufügen</button>
 
                     <div class="controls survey">
                         <div></div>
@@ -58,18 +58,28 @@ document.addEventListener("DOMContentLoaded", () => {
         const answerList = document.getElementById("answerList");
 
 
-        const addAnswerField = (value = "") => {
+        const addAnswerField = (value = "", removable = true) => {
             const row = document.createElement("div");
             row.className = "answer-row";
 
+            const buttonHTML = removable 
+                ? '<button class="remove-answer">✕</button>'
+                : '<div style="min-width:24px;"></div>'; // leerer Platzhalter
+
             row.innerHTML = `
                 <input type="text" class="answer-input" value="${value}">
-                <button class="remove-answer">✕</button>
+                ${buttonHTML}
             `;
 
-            row.querySelector(".remove-answer").onclick = () => row.remove();
+            if (removable) {
+                row.querySelector(".remove-answer").onclick = () => row.remove();
+            }
+
             answerList.appendChild(row);
         };
+
+        addAnswerField("",false);
+        addAnswerField("",false);
 
         document.getElementById("addAnswerBtn").onclick = () => addAnswerField();
 

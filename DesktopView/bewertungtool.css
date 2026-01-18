@@ -117,6 +117,12 @@
   margin-bottom: 20px;
 }
 
+.btn.small.border{
+  border-color: #dddddd;
+  color: #353535;
+
+}
+
 .dropdown-footer {
   border-top: 1px solid #eee;
   margin-top: 8px;

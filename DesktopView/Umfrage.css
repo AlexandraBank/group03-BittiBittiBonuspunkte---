@@ -69,7 +69,13 @@
 
 .answer-input {
     flex: 1;
-    border-radius: 2px;
+    border-radius: 3px;
+    border-width: 1px;
+    border-color: #c0c0c0;
+    border-style: solid;
+    padding-top: 4px;
+    padding-bottom: 4px;
+
 
 }
 
@@ -78,6 +84,7 @@
     border: none;
     cursor: pointer;
     font-size: 14px;
+    min-width:24px;
 }
 
 .survey-list .poll-bar-label {
