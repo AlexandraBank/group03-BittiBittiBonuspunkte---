@@ -455,6 +455,7 @@ if (bewertungBtn) {
         function renderSuggestions() {
             if (!suggestionsListEl) return;
             suggestionsListEl.innerHTML = '';
+
             suggestions.forEach(function (s) {
                 const item = document.createElement('div');
                 item.className = 'suggestion-item';
@@ -464,6 +465,7 @@ if (bewertungBtn) {
                 item.addEventListener('click', function () {
                     const textarea = overlay.querySelector('#ratingText');
                     if (textarea) textarea.value = s;
+                    hideSuggestions();
                 });
                 suggestionsListEl.appendChild(item);
             });
@@ -522,7 +524,8 @@ if (bewertungBtn) {
 
         exitBtn.addEventListener('click', function(e) {
             overlay.remove();
-        });       
+        });  
+
     });
 }
 
