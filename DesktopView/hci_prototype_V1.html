@@ -203,13 +203,12 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
 
         const answerBtn = document.createElement('button');
         answerBtn.className = 'answer';
-        answerBtn.title = 'als beantwortet markieren';
+        answerBtn.title = 'Als beantwortet markieren';
         answerBtn.dataset.id = q.id;
-        answerBtn.textContent = 'als beantwortet markieren';
 
         answerBtn.textContent = q.isAnswered
             ? 'Antwort zurücknehmen'
-            : 'als beantwortet markieren';
+            : 'Als beantwortet markieren';
 
         
         const deleteBtn = document.createElement('button');

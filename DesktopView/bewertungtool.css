@@ -44,7 +44,7 @@
   margin: 8px 0 12px 0;
   border: 1px solid #ccc;
   border-radius: 4px;
-  resize: vertical;
+  resize: none;
   font-family: inherit;
 }
 
