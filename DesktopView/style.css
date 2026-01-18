@@ -129,7 +129,7 @@
     cursor: pointer;
 }
 
-/* participant counter style */
+
 
 .members .participant {
     display: flex;
@@ -139,7 +139,7 @@
     color: #fff;
     padding: 6px 8px;
     background: transparent;
-    width: 100%; /* fill the parent .members box */
+    width: 100%;
     box-sizing: border-box;
     justify-content: center;
 }
