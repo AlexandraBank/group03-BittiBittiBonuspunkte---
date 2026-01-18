@@ -23,6 +23,17 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.26);
 }
 
+
+.popup-content .controls {
+  justify-content: center;
+}
+
+
+.popup-content .controls .btn {
+  flex: 1 1 0;
+  min-width: 0; 
+}
+
 .close-btn {
   position: absolute;
   top: 10px; right: 10px;
