@@ -54,6 +54,16 @@
             <div class="block questions">
                 <h2> Fragen der Studenten</h2>
                 <p> Hier können Sie auf Fragen der Studenten eingehen. </p>
+
+                <div>
+                    Filtern nach:
+                    <select class="dropdown-filter" id="dropdown-filter">
+                        <option value="Zu beantworten">Zu beantworten</option>
+                        <option value="Schon beantwortet">Schon beantwortet</option>
+                        <option value="Alle Fragen ohne Reden, alles komplett">Alle Fragen ohne Reden, alles komplett</option>
+                    </select>
+                </div>
+
                 <div>
                     <div id="questionsList"></div>
                 </div>
@@ -132,6 +142,7 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
     const questionsListEl = document.getElementById('questionsList');
     const inputEl = document.getElementById('questionInput');
     const submitBtn = document.getElementById('submitQuestion');
+    const filterSelect = document.getElementById('dropdown-filter');
 
     function loadQuestions() {
         try {
@@ -139,8 +150,8 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
             const questions = raw ? JSON.parse(raw) : [];
 
             return questions.map(q => ({
-                isAnswered:false,
-                ...q
+                ...q,
+                isAnswered: q.isAnswered ?? false
             }))
 
         } catch {
@@ -224,8 +235,19 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
     }
 
     function renderQuestions() {
-        const questions = loadQuestions();
+        let questions = loadQuestions();
         if (!questionsListEl) return;
+
+        const filter = filterSelect?.value;
+
+        if (filter === 'Zu beantworten') {
+            questions = questions.filter(q => !q.isAnswered);
+        } else if (filter === 'Schon beantwortet') {
+            questions = questions.filter(q => q.isAnswered);
+        } else if (filter === 'Alle Fragen ohne Reden, alles komplett') {
+        questions = questions;
+        }
+
         questionsListEl.innerHTML = '';
         questions.sort((a,b) => (b.votes||0) - (a.votes||0) || (a.created||0) - (b.created||0));
         questions.forEach(q => questionsListEl.appendChild(createCardElement(q)));
@@ -312,6 +334,12 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
                 e.preventDefault();
                 submitBtn.click();
             }
+        });
+    }
+
+     if (filterSelect) {
+        filterSelect.addEventListener('change', function () {
+            renderQuestions();
         });
     }
 

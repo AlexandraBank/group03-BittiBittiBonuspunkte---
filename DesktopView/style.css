@@ -287,3 +287,12 @@ button:disabled {
 .was {
     margin-bottom: 20px;
 }
+
+.dropdown-filter{
+    margin-bottom: 20px;
+    margin-left: 10px;
+    max-width: 300px;
+    padding: 2px;
+    border-radius: 3px;
+    border-color: #808080;
+}
