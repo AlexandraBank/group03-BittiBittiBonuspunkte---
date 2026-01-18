@@ -33,14 +33,14 @@
 </div>
 
 <script>
-  // NUR FÜR DEMO: Session beim Laden zurücksetzen
+  //NUR FÜR DEMO: Session beim Laden zurücksetzen
   localStorage.removeItem("sessionStarted");
-  // Falls Session schon gestartet ist
+  //Falls Session schon gestartet ist
   if (localStorage.getItem("sessionStarted") === "true") {
     window.location.href = "HandyHome.html";
   }
 
-  // Reagiert auf Änderungen aus ANDEREN Tabs
+  //Reagiert auf Änderungen aus ANDEREN Tabs
   window.addEventListener("storage", (event) => {
     if (event.key === "sessionStarted" && event.newValue === "true") {
       window.location.href = "HandyHome.html";

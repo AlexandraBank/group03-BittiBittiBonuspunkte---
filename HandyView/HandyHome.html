@@ -36,7 +36,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const container = document.getElementById('surveysWrap');
 
-    /* ========= Load surveys from savedSurveys ========= */
     function loadSurveys() {
         try {
             const raw = localStorage.getItem('savedSurveys');
@@ -48,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    /* ========= Votes (per device) ========= */
+
     function loadVotes() {
         try {
             return JSON.parse(localStorage.getItem('rating_votes') || '{}');
@@ -71,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
         saveVotes(votes);
     }
 
-    /* ========= Render ========= */
+    
     function render() {
         container.innerHTML = '';
 
