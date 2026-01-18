@@ -20,17 +20,22 @@ document.addEventListener("DOMContentLoaded", () => {
                     <button class="close-btn" id="closeSurveyBtn">&times;</button>
                     <h2>Umfrage erstellen</h2>
 
-                    <p>Frage:</p>
-                    <textarea id="surveyQuestion" rows="3"></textarea>
+                    <p class="was">Gib eine Frage und mindestens 2 Antworten ein:</p>
+                    <textarea id="surveyQuestion" rows="5"></textarea>
 
-                    <p>Antwortmöglichkeiten:</p>
-                    <div id="answerList"></div>
+                    <p class="was">Antwortmöglichkeiten:</p>
+                    <div id="answerList" class="answerList"></div>
+
+
+                    
+                    
 
                     <button class="btn small" id="addAnswerBtn">+ Antwort hinzufügen</button>
 
-                    <div class="controls">
+                    <div class="controls survey">
+                        <div></div>
+                        <button class="btn" id="cancelSurveyBtn" >Abbrechen</button>
                         <button class="btn primary" id="confirmSurveyBtn">Bestätigen</button>
-                         <button class="btn" id="cancelSurveyBtn">Abbrechen</button>
                     </div>
 
 
@@ -41,10 +46,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const overlay = document.getElementById("surveyOverlay");
         const close = () => overlay.remove();
 
+        const cancelBtn = document.getElementById("cancelSurveyBtn");
+        if (cancelBtn) {
+            cancelBtn.hidden = true; 
+
+        }
+
         document.getElementById("closeSurveyBtn").onclick = close;
         document.getElementById("cancelSurveyBtn").onclick = close;
 
         const answerList = document.getElementById("answerList");
+
 
         const addAnswerField = (value = "") => {
             const row = document.createElement("div");

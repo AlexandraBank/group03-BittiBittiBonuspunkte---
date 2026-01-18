@@ -56,6 +56,8 @@
   margin-bottom: 12px;
 }
 
+
+
 .btn {
   padding: 8px 10px;
   border: 1px solid #888;
@@ -112,6 +114,7 @@
 .btn.small {
   padding: 6px 8px;
   font-size: 13px;
+  margin-bottom: 20px;
 }
 
 .dropdown-footer {
@@ -285,4 +288,8 @@
   position: static;
   margin-left: auto;
   align-self: flex-start;
+}
+
+.answerList {
+  margin-bottom:10px;
 }
