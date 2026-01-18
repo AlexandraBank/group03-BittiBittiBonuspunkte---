@@ -25,6 +25,17 @@
     gap: 10px;
 }
 
+/* Center control buttons inside popup dialogs */
+.popup-content .controls {
+    justify-content: center;
+}
+
+/* Make popup buttons fill available space and stretch evenly */
+.popup-content .controls .btn {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
 .btn {
     padding: 6px 14px;
     border: none;
