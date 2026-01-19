@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="burgerMenu.css">
     <link rel="stylesheet" href="Umfrage.css">
     <link rel="stylesheet" href="bewertungtool.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,40 +12,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="Umfrage.js" defer></script>
     <script src="bewertungentool.js" defer></script>
+    <script src="sidebar.js" defer></script>
 </head>
 <body>
-    <div id="burger-menu-container">
-        <div class="burger-menu" title="Wechseln Sie die Veranstaltung">
-            <input type="checkbox" id="menu-toggle" />
-            <label for="menu-toggle" class="menu-icon">
-                <span></span>
-                <span></span>
-                <span></span>
-            </label>
-            <nav class="menu">
-            <ul>
-                <li class="has-submenu">
-                <a href="#">Vorlesungen</a>
-                <div class="submenu submenu-vorlesungen">
-                <ul>
-                    <li><a href="hci_prototype_V1.html">Vorlesung 1</a></li>
-                    <li><a href="hci_prototype_V1.html">Vorlesung 2</a></li>
-                    <li><a href="hci_prototype_V1.html">Vorlesung 3</a></li>
-                </ul>
-                </div>
-                </li>
-                <li class="has-submenu">
-                    <a href="#">Übungen</a>
-                    <div class="submenu submenu-uebungen">
-                        <ul>
-                            <li><a href="hci_prototype_V1.html">Übung 1</a></li>
-                            <li><a href="hci_prototype_V1.html">Übung 2</a></li>
-                            <li><a href="hci_prototype_V1.html">Übung 3</a></li>
-                        </ul>
-                    </div>
-                </li>
-            </ul>
-            </nav>
+    <div class="nav-box">
+    <button class="nav-btn">Vorlesung</button>
+    <div class="nav-sub">
+        <button class="sub-btn">Vorlesung 1</button>
+        <button class="sub-btn">Vorlesung 2</button>
+        <button class="sub-btn">Vorlesung 3</button>
+    </div>
+
+    <button class="nav-btn">Übung</button>
+    <div class="nav-sub">
+        <button class="sub-btn">Übung 1</button>
+        <button class="sub-btn">Übung 2</button>
+        <button class="sub-btn">Übung 3</button>
+    </div>
+</div>
+
         </div>
     </div>
     <div class="flexbox screen"> 
