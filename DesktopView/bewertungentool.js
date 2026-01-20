@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		container.innerHTML = '';
 		if (!polls.length) {
 			const p = document.createElement('p');
-			p.textContent = 'Keine Fragen zum Bewerten vorhanden. Erstelle eine neue Frage, bei der die Studierenden positiv/neutral/negativ abstimmen können.';
+			p.textContent = 'Keine Fragen zum Bewerten vorhanden. Erstelle eine neue Bewertung, bei der die Studierenden positiv/neutral/negativ abstimmen können.';
 			container.appendChild(p);
 			return;
 		}
