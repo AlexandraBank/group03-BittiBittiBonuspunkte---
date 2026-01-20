@@ -306,7 +306,7 @@ button:disabled {
     left: 15px;
     width: 300px;
     height: 97vh;
-    background-color: #737e88d6;
+    background-color:rgb(135, 135, 135);
     border-radius: 10px;
     padding-left: 15px;
     padding-right: 15px;
