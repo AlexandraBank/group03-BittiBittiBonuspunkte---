@@ -96,8 +96,7 @@ document.addEventListener('DOMContentLoaded', function () {
             options.className = 'poll-options';
 
             const votedIndex = loadVotes()[survey.id];
-           
-            const colorClasses = ['bar-yes','bar-neutral','bar-no'];
+            const selectedClass = 'selected-blue';
 
             survey.answers.forEach((answer, index) => {
                 const btn = document.createElement('button');
@@ -107,16 +106,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (votedIndex !== undefined) {
                     btn.disabled = true;
                     if (votedIndex === index) {
-                        btn.classList.add('voted');
-                        const cls = colorClasses[index % colorClasses.length];
-                        if (cls) btn.classList.add(cls);
+                        btn.classList.add('voted', selectedClass);
                     }
                 } else {
                     btn.addEventListener('click', () => {
                         recordVote(survey.id, index);
-                        // apply immediate visual feedback before re-render
-                        const cls = colorClasses[index % colorClasses.length];
-                        if (cls) btn.classList.add(cls, 'voted');
+                        // immediate visual feedback with unified blue color
+                        btn.classList.add(selectedClass, 'voted');
                         btn.disabled = true;
                         setTimeout(() => render(), 150);
                     });

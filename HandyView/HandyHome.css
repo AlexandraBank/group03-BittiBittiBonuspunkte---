@@ -71,16 +71,9 @@ iframe {
 }
 
 
-.poll-option.bar-yes {
-    background: linear-gradient(90deg,#2ecc71,#27ae60);
-    color: #fff;
-}
-.poll-option.bar-neutral {
-    background: linear-gradient(90deg,#f1c40f,#f39c12);
-    color: #333;
-}
-.poll-option.bar-no {
-    background: linear-gradient(90deg,#e74c3c,#c0392b);
+/* Single selected color (blue) for voted options */
+.poll-option.selected-blue {
+    background: linear-gradient(90deg,#2b6cb0,#245a96);
     color: #fff;
 }
 .poll-option.voted {

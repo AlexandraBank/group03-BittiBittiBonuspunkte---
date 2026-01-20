@@ -215,15 +215,15 @@ document.addEventListener("DOMContentLoaded", () => {
         const poll = document.createElement("div");
         poll.className = "poll";
 
-        const percent = Math.floor(100 / survey.answers.length);
-        const colorClasses = ['bar-yes', 'bar-neutral', 'bar-no'];
+    const percent = Math.floor(100 / survey.answers.length);
+    const defaultColorClass = 'selected-blue';
 
         poll.innerHTML = `
             <div class="poll-question">${survey.question}</div>
 
             <div class="poll-bars">
                 ${survey.answers.map((a, i) => {
-                    const colorClass = colorClasses[i % colorClasses.length];
+                    const colorClass = defaultColorClass;
                     return `
                     <div class="poll-bar ${colorClass}">
                         <div class="poll-bar-fill" style="width:${percent}%"></div>
@@ -279,6 +279,35 @@ document.addEventListener("DOMContentLoaded", () => {
         if (survey.id) poll.dataset.pollId = survey.id;
 
         list.appendChild(poll);
+
+        try {
+            const pollId = survey.id;
+            const bars = poll.querySelectorAll('.poll-bar');
+            if (bars && bars.length) {
+
+                const rawVotes = localStorage.getItem('rating_votes');
+                const existingVotes = rawVotes ? JSON.parse(rawVotes) : {};
+
+                bars.forEach((bar, idx) => {
+                    bar.style.cursor = existingVotes.hasOwnProperty(pollId) ? 'default' : 'pointer';
+
+                    bar.addEventListener('click', function (e) {
+                        try {
+                            const rv = localStorage.getItem('rating_votes');
+                            const vObj = rv ? JSON.parse(rv) : {};
+
+                            if (vObj.hasOwnProperty(pollId)) return;
+                            vObj[pollId] = idx;
+                            localStorage.setItem('rating_votes', JSON.stringify(vObj));
+     
+                            try { updatePollsFromVotes(); } catch (e) {}
+
+                            try { if (window.BroadcastChannel) new BroadcastChannel('hci_channel').postMessage({ type: 'rating_votes', pollId: pollId }); } catch (e) {}
+                        } catch (err) { console.warn('Could not record vote', err); }
+                    });
+                });
+            }
+        } catch (err) { /*ignore*/ }
     }
 
     function updatePollsFromVotes() {
@@ -339,6 +368,42 @@ document.addEventListener("DOMContentLoaded", () => {
             const statsElem = poll.querySelector(".poll-stats");
             if (statsElem) {
                 statsElem.textContent = `Stimmen: ${totalVotes}`;
+            }
+          
+            try {
+                let myVote = undefined;
+                if (votes.hasOwnProperty(pollId)) {
+                    myVote = votes[pollId];
+                } else {
+                    for (var k in votes) {
+                        if (!k) continue;
+                        if (k.indexOf(pollId) !== -1) {
+                            const raw = votes[k];
+                            if (typeof raw === 'number') { myVote = raw; break; }
+                            if (typeof raw === 'string') {
+                                if (raw.indexOf(':') !== -1) {
+                                    const parts = raw.split(':');
+                                    const last = parseInt(parts[parts.length - 1], 10);
+                                    if (!isNaN(last)) { myVote = last; break; }
+                                } else {
+                                    const asn = parseInt(raw, 10);
+                                    if (!isNaN(asn)) { myVote = asn; break; }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                const barElems = poll.querySelectorAll('.poll-bar');
+                barElems.forEach((bar, idx) => {
+                    if (myVote !== undefined && Number(idx) === Number(myVote)) {
+                        bar.classList.add('selected-blue');
+                    } else {
+                        bar.classList.remove('selected-blue');
+                    }
+                });
+            } catch (err) {
+                //ignore
             }
         });
     }

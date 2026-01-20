@@ -112,3 +112,11 @@
     font-size: clamp(10px, 2.5vw, 18px);
     margin-left: 15px;
 }
+
+
+.poll-bar.selected-blue .poll-bar-fill {
+    background: linear-gradient(90deg,#2b6cb0,#245a96) !important;
+}
+.poll-bar.selected-blue .poll-bar-label {
+    color: #fff;
+}
