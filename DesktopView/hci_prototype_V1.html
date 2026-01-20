@@ -15,29 +15,37 @@
     <script src="sidebar.js" defer></script>
 </head>
 <body>
-    <div class="nav-box">
-    <button class="nav-btn">Vorlesung</button>
-    <div class="nav-sub">
-        <button class="sub-btn">Vorlesung 1</button>
-        <button class="sub-btn">Vorlesung 2</button>
-        <button class="sub-btn">Vorlesung 3</button>
-    </div>
+    <div class="bg"> </div>
 
-    <button class="nav-btn">Übung</button>
-    <div class="nav-sub">
-        <button class="sub-btn">Übung 1</button>
-        <button class="sub-btn">Übung 2</button>
-        <button class="sub-btn">Übung 3</button>
-    </div>
-    <div class="dropdown-footer">
-        <button id="manageBtn" class="btn small">Beispielbewertung bearbeiten</button>
-    </div>
-    <button id="exitMainBtn" class="btn small" title="Zurück zum Hauptbildschirm" style="position:absolute;left:12px;bottom:12px;width:calc(100% - 24px);background:#eee;border:1px solid #ccc;padding:8px 10px;border-radius:6px;">Zurück zum Main</button>
-</div>
+    <div class="flexbox screen">
+        <div class="nav-box">
 
+
+            <div class="room-container">
+                <h3>📚 Vorlesung</h3>
+                <div class="sub-menu">
+                    <h4> Vorlesung 1</h4>
+                    <h4> Vorlesung 2</h4>
+                    <h4> Vorlesung 3</h4>
+                </div>
+            </div>
+
+            <div class="room-container">
+                <h3>📝 Übung</h3>
+                <div class="sub-menu">
+                    <h4> Übung 1</h4>
+                    <h4> Übung 2</h4>
+                    <h4> Übung 3</h4>
+                </div>
+            </div>
+
+            
+            <button id="manageBtn" class="btn small">Beispielfragen bearbeiten</button>
+            
+            <!--<button id="exitMainBtn" class="btn small" title="Zurück zum Hauptbildschirm" style="position:absolute;left:12px;bottom:12px;width:calc(100% - 24px);background:#eee;border:1px solid #ccc;padding:8px 10px;border-radius:6px;">Zurück zum Main</button>
+-->
+        
         </div>
-    </div>
-    <div class="flexbox screen" style="margin-left:170px;"> 
         <div class="section"> 
             <div class="block questions">
                 <h2> Fragen der Studenten</h2>
@@ -377,7 +385,7 @@ if (bewertungBtn) {
 
                     <div class="dropdown">
                         <button id="showSuggestionsBtn" class="btn" aria-expanded="true" aria-controls="suggestions">
-                            <span class="btn-label">Beispielbewertungen</span>
+                            <span class="btn-label">Beispielfragen</span>
                             <span class="chevron" aria-hidden="true">▾</span>
                         </button>
 
@@ -829,8 +837,11 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+    
 
 });
+
+
 
 </script> 
 

@@ -1,6 +1,6 @@
 * {
     box-sizing: border-box;
-    font-family: "Plus Jakarta Sans", sans-serif;  
+    font-family: "Plus Jakarta Sans", sans-serif; 
 }
 
 
@@ -16,7 +16,7 @@
 .screen {
     margin: auto auto;
     vertical-align:middle;
-    width: 85%;
+    width: 98%;
 }
 
 .flexbox {
@@ -31,6 +31,7 @@
     border-radius: 10px;
     padding: 15px 15px;
     margin: 5px;
+    margin-top: 0px;
     box-shadow: 2px 2px 2px rgba(87, 87, 87, 0.274);
 }
 
@@ -301,25 +302,20 @@ button:disabled {
 }
 
 .nav-box {
-    position: absolute;
     top: 13px;
     left: 15px;
-    width: 130px;
+    width: 300px;
     height: 97vh;
-    background-color: rgb(206, 202, 202);
+    background-color: #154981d6;
     border-radius: 10px;
-    padding: 12px;
+    padding-left: 15px;
+    padding-right: 15px;
     box-shadow: 2px 2px 2px rgba(87, 87, 87, 0.274);
     z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    margin-right: 10px;
 }
 
-.nav-box h3 {
-    margin: 0 0 10px 0;
-    font-size: 18px;
-}
+
 
 .nav-btn {
     width: 110%;
@@ -392,3 +388,36 @@ button:disabled {
 .sub-btn:hover {
     background: rgb(230, 230, 230);
 }
+
+.room-container{
+    padding-bottom: 10px;
+}
+
+h3 {
+    color: white;
+    padding-top: 0px;
+    padding-bottom: 5px;
+    font-size: 18px;
+    margin-bottom: 4px;
+}
+
+h4 {
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-left: 27px;
+}
+
+.bg {
+    position: absolute;
+    z-index: -1;
+    background-color: rgb(67, 124, 159);
+    height: 100vh;
+    width:100vw;
+    left: 0px;
+    top: 0px;
+    display: none;
+}
+
