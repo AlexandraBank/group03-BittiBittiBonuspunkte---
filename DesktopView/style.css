@@ -14,9 +14,9 @@
 }
 
 .screen {
-    margin: auto auto;
+    margin-right:auto;
     vertical-align:middle;
-    width: 98%;
+    width: 100%;
 }
 
 .flexbox {
@@ -312,7 +312,7 @@ button:disabled {
     padding-right: 15px;
     box-shadow: 2px 2px 2px rgba(87, 87, 87, 0.274);
     z-index: 1000;
-    margin-right: 10px;
+    margin-right: 15px;
 }
 
 
