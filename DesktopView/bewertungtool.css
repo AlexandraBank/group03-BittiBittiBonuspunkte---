@@ -24,6 +24,40 @@
 }
 
 
+#exampleManagerModal .popup-content {
+  width: min(720px, 92%);
+  max-width: 720px;
+  padding: 20px;
+}
+
+#exampleManagerModal .manage-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#exampleManagerModal .manage-list li {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 6px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+#exampleManagerModal .manage-list li span {
+  flex: 1 1 auto;
+  min-width: 0; /* allow flex item to shrink and wrap */
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+#exampleManagerModal .manage-list p.survey-empty-text {
+  margin: 0;
+  padding: 8px;
+  color: #666;
+}
+
+
 .popup-content .controls {
   justify-content: center;
 }
