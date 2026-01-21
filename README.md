@@ -6,3 +6,4 @@ Den MobileView haben wir mit einer BrowserExtension (https://www.webmobilefirst.
 
 Für MobileView bitte zuerst Wartescreen.html ausführen.
 
+Ggf. muss vorher der lokale Speicher der Website gelöscht werden, wenn manche Funktionen nicht funktionieren.
