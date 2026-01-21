@@ -41,9 +41,8 @@
 
             
             <button id="manageBtn" class="btn small">Beispielfragen bearbeiten</button>
-            
-            <!--<button id="exitMainBtn" class="btn small" title="Zurück zum Hauptbildschirm" style="position:absolute;left:12px;bottom:12px;width:calc(100% - 24px);background:#eee;border:1px solid #ccc;padding:8px 10px;border-radius:6px;">Zurück zum Main</button>
--->
+           
+            <button id="exitMainBtn" class="btn small exit-main" title="Zurück zum Hauptbildschirm">Zurück zum Main</button>
         
         </div>
         <div class="section"> 
@@ -164,6 +163,34 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
             try { window.location.href = 'mainDisplay.html'; } catch (err) { console.warn('Could not navigate to mainDisplay', err); }
         });
     }
+
+    try {
+        const lectureHeaders = document.querySelectorAll('.room-container h3');
+        lectureHeaders.forEach(h => h.style.cursor = 'pointer');
+        document.querySelectorAll('.room-container h3').forEach(function (h) {
+            h.addEventListener('click', function () {
+                try { localStorage.setItem('selectedRoom', h.textContent.trim()); } catch (e) {}
+                try { location.reload(); } catch (e) {}
+            });
+        });
+
+        document.querySelectorAll('.sub-menu h4').forEach(function (el) {
+            el.style.cursor = 'pointer';
+            el.addEventListener('click', function () {
+                try { localStorage.setItem('selectedLecture', el.textContent.trim()); } catch (e) {}
+                try { location.reload(); } catch (e) {}
+            });
+        });
+
+
+        const surveyTitle = document.querySelector('.survey-title');
+        if (surveyTitle) {
+            surveyTitle.style.cursor = 'pointer';
+            surveyTitle.addEventListener('click', function () {
+                try { location.reload(); } catch (e) {}
+            });
+        }
+    } catch (err) { /* ignore */ }
 
     function saveQuestions(list) {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
