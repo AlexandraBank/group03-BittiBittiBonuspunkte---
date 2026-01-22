@@ -89,6 +89,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		const label = document.createElement('div');
 		label.className = 'poll-bar-label';
 		label.textContent = emoji + ' ' + count + ' (' + pct + '%)';
+		label.style.color = count > 0 ? '#fff' : '#000';
 		wrap.appendChild(fill);
 		wrap.appendChild(label);
 		return wrap;
