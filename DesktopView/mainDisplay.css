@@ -47,18 +47,18 @@ body {
   transition: background 0.2s;
 }
 .button-row button.create {
-  background: #4caf50;
+  background: #39773b;
   color: #fff;
   margin-right: 0.5rem;
 }
 .button-row button.join {
-  background: #2196f3;
+  background: rgb(79, 99, 143);;
   color: #fff;
   margin-left: 0.5rem;
 }
 .button-row button.create:hover {
-  background: #388e3c;
+  background: #234b25d9;
 }
 .button-row button.join:hover {
-  background: #1769aa;
+  background: rgb(60, 75, 109);
 }
