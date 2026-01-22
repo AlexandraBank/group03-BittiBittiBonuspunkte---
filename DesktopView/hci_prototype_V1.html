@@ -19,7 +19,10 @@
 
     <div class="flexbox screen">
         <div class="nav-box">
-            <div></div>
+            <div class="logo-wrapper">
+                <img src="../pictures/ZeBestLogoOfTime.png" alt="Logo" style="width: 65%; height: auto; margin-bottom: 20px; border-radius: 8px; margin-left: -12px;margin-top: 10px;">
+                <p class="logo-text">Bitti Bitti Bonuspunkte<p>
+            </div>
 
             <div>
                 <div class="room-container">
@@ -180,7 +183,7 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
             el.style.cursor = 'pointer';
             el.addEventListener('click', function () {
                 try { localStorage.setItem('selectedLecture', el.textContent.trim()); } catch (e) {}
-                try { location.reload(); } catch (e) {}
+                try { alert("Dieses Feature ist aktuell noch nicht implementiert."); } catch (e) {}
             });
         });
 

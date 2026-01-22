@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		const ratingPolls = (polls || []).filter(function (p) { return !Array.isArray(p.answers) || !p.answers.length; });
 		if (!ratingPolls.length) {
 			const p = document.createElement('p');
-			p.textContent = 'Keine Bewertungen vorhanden.';
+			p.textContent = 'Keine Bewertungen vorhanden. Warte darauf, dass der Dozent eine Bewertung erstellt.';
 			container.appendChild(p);
 			return;
 		}

@@ -13,12 +13,14 @@
 <body>
     <div class="screen">
         <div class="section">
+            <h2> Bewertungen </h2>
             <iframe src="bewertungtool_mobile.html" style="width:100%;height:30vh;border:0;" title="Bewertungstool"></iframe>
         </div>
     </div>
 
     <div class="screen">
         <div class="section down">
+            <h2> Umfragen </h2>
             <div class="wrap" id="surveysWrap">
             </div>
         </div>
@@ -77,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const surveys = loadSurveys();
 
         if (!surveys.length) {
-            container.innerHTML = '<p>Keine Umfragen vorhanden.</p>';
+            container.innerHTML = '<p>Keine Umfragen vorhanden. Warte darauf, dass der Dozent eine Umfrage erstellt.</p>';
             return;
         }
 

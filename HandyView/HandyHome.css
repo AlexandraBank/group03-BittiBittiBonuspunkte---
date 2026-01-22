@@ -41,10 +41,12 @@ iframe {
 
 .survey {
     background-color: #ffffff;
-    padding: 20px;
+    padding: 12px;
+    padding-top: 15px;
     border-radius: 8px;
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
+    min-height:120px;
 }
 
 .poll-question {
@@ -56,7 +58,9 @@ iframe {
 .poll-options {
     display: flex;
     justify-content: space-between;
+    gap: 12px;
     margin-bottom: 10px;
+    margin-top: 12px;
 }
 
 .poll-option {
@@ -101,4 +105,8 @@ iframe {
 
 .bottom-nav .active { 
     font-weight: bold; 
+}
+
+h2{
+    margin-bottom: 20px;
 }
