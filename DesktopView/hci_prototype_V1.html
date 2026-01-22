@@ -174,8 +174,12 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
         lectureHeaders.forEach(h => h.style.cursor = 'pointer');
         document.querySelectorAll('.room-container h3').forEach(function (h) {
             h.addEventListener('click', function () {
+                const container = h.closest('.room-container');
+                if (container) {
+                    container.classList.toggle('open');
+                }
+
                 try { localStorage.setItem('selectedRoom', h.textContent.trim()); } catch (e) {}
-                try { location.reload(); } catch (e) {}
             });
         });
 
@@ -188,13 +192,6 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
         });
 
 
-        const surveyTitle = document.querySelector('.survey-title');
-        if (surveyTitle) {
-            surveyTitle.style.cursor = 'pointer';
-            surveyTitle.addEventListener('click', function () {
-                try { location.reload(); } catch (e) {}
-            });
-        }
     } catch (err) { /* ignore */ }
 
     function saveQuestions(list) {
