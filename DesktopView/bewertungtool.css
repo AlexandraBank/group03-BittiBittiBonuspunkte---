@@ -367,3 +367,10 @@
 .answerList {
   margin-bottom:10px;
 }
+
+.rating-empty-list{
+  font-size: clamp(10px, 2.5vw, 18px);
+  margin-top: 0px;
+  margin-bottom: 40px;
+  color: #060606;
+}
