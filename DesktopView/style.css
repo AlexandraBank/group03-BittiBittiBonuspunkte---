@@ -302,6 +302,9 @@ button:disabled {
 }
 
 .nav-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     top: 13px;
     left: 15px;
     width: 300px;
@@ -389,19 +392,6 @@ button:disabled {
     background: rgb(230, 230, 230);
 }
 
-
-.nav-box .exit-main {
-    position: fixed;
-    left: 15px; 
-    bottom: 10px; 
-    width: 200px; 
-    background: #eee;
-    border: 1px solid #ccc;
-    padding: 8px 10px;
-    border-radius: 6px;
-    text-align: center;
-    z-index: 1350;
-}
 .room-container{
     padding-bottom: 10px;
 }

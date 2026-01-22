@@ -165,6 +165,26 @@
   margin-bottom: 20px;
 }
 
+.btn.small.sidebar-button{
+  width: 100%;
+  font-size: 13px;
+  font-weight: 500;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  background-color: #22222200;
+  border-width: 2px;
+  border-color: #ffffff;
+  color: white;
+  margin-bottom: 10px;
+}
+
+.btn.small.sidebar-button.highlight{
+  background-color: #ffffff;
+  color: black;
+  margin-bottom: 20px;
+
+}
+
 .btn.small.border{
   border-color: #dddddd;
   color: #353535;
