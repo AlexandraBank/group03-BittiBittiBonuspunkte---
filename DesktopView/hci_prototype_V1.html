@@ -389,6 +389,123 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
     
 })();
 
+
+function getExampleSuggestions() {
+    try { return JSON.parse(localStorage.getItem('rating_suggestions') || '[]'); } catch (e) { return []; }
+}
+
+function ensureSuggestionsLoaded(cb) {
+    try {
+        const stored = localStorage.getItem('rating_suggestions');
+        if (stored && stored.length) {
+            if (typeof cb === 'function') cb();
+            return;
+        }
+    } catch (e) { /* ignore */ }
+
+    try {
+        fetch('suggestions.json')
+            .then(function (res) { if (!res.ok) throw new Error('network'); return res.json(); })
+            .then(function (data) {
+                if (Array.isArray(data)) {
+                    try { localStorage.setItem('rating_suggestions', JSON.stringify(data)); } catch (e) { }
+                }
+            })
+            .catch(function () { /* ignore fetch errors */ })
+            .finally(function () { if (typeof cb === 'function') cb(); });
+    } catch (e) {
+        if (typeof cb === 'function') cb();
+    }
+}
+
+function saveExampleSuggestions(list) {
+    try { localStorage.setItem('rating_suggestions', JSON.stringify(list)); } catch (e) { console.warn('Konnte Vorschläge nicht speichern', e); }
+}
+
+function openExampleManager() {
+    if (document.getElementById('exampleManagerModal')) return;
+    const overlay = document.createElement('div');
+    overlay.className = 'popup-overlay';
+    overlay.id = 'exampleManagerModal';
+    overlay.style.display = 'flex';
+    overlay.innerHTML = `
+        <div class="popup-content" role="dialog" aria-modal="true">
+            <button class="close-btn" id="examplesCloseBtn">&times;</button>
+            <h2>Beispielbewertungen verwalten</h2>
+            <p>Hier siehst du alle Beispielbewertungen. Du kannst neue hinzufügen oder bestehende löschen.</p>
+            <div style="margin:10px 0;">
+                <input id="examplesInput" type="text" placeholder="Neue Beispielbewertung hinzufügen" style="width:70%;padding:8px;border:1px solid #ccc;border-radius:4px;" />
+                <button id="examplesAddBtn" class="btn small" style="margin-left:8px;">Hinzufügen</button>
+            </div>
+            <ul id="examplesList" class="manage-list" style="max-height:320px;overflow:auto;padding:0 6px;margin:6px 0 0 0;">
+            </ul>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+
+    const listEl = overlay.querySelector('#examplesList');
+    const inputEl = overlay.querySelector('#examplesInput');
+    const addBtn = overlay.querySelector('#examplesAddBtn');
+    const closeBtn = overlay.querySelector('#examplesCloseBtn');
+
+    function render() {
+        const items = getExampleSuggestions();
+        listEl.innerHTML = '';
+        if (!items || items.length === 0) {
+            const p = document.createElement('p');
+            p.className = 'survey-empty-text';
+            p.textContent = 'Keine Beispielbewertungen vorhanden.';
+            listEl.appendChild(p);
+            return;
+        }
+        items.forEach((s, idx) => {
+            const li = document.createElement('li');
+            li.style.display = 'flex';
+            li.style.justifyContent = 'space-between';
+            li.style.alignItems = 'center';
+            li.style.padding = '6px 8px';
+            const span = document.createElement('span');
+            span.textContent = s;
+            const del = document.createElement('button');
+            del.className = 'del-btn';
+            del.textContent = 'Löschen';
+            del.addEventListener('click', function () {
+                const arr = getExampleSuggestions();
+                arr.splice(idx, 1);
+                saveExampleSuggestions(arr);
+                render();
+            });
+            li.appendChild(span);
+            li.appendChild(del);
+            listEl.appendChild(li);
+        });
+    }
+
+    addBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        const v = inputEl.value.trim();
+        if (!v) return;
+        const arr = getExampleSuggestions();
+        arr.unshift(v);
+        saveExampleSuggestions(arr);
+        inputEl.value = '';
+        render();
+    });
+
+    inputEl.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); addBtn.click(); } });
+
+    closeBtn.addEventListener('click', function () { overlay.remove(); });
+
+    overlay.addEventListener('click', function (ev) { if (ev.target === overlay) overlay.remove(); });
+
+    ensureSuggestionsLoaded(function () {
+        render();
+    });
+}
+
+const topManageBtn = document.getElementById('manageBtn');
+if (topManageBtn) topManageBtn.addEventListener('click', function (e) { e.preventDefault(); openExampleManager(); });
+
 const bewertungBtn = document.getElementById('openBewertungBtn');
 
 
@@ -455,122 +572,6 @@ if (bewertungBtn) {
                 polls = [];
             }
         }
-
-        function getExampleSuggestions() {
-            try { return JSON.parse(localStorage.getItem('rating_suggestions') || '[]'); } catch (e) { return []; }
-        }
-
-       
-        function ensureSuggestionsLoaded(cb) {
-            try {
-                const stored = localStorage.getItem('rating_suggestions');
-                if (stored && stored.length) {
-                    if (typeof cb === 'function') cb();
-                    return;
-                }
-            } catch (e) { /* ignore */ }
-
-            try {
-                fetch('suggestions.json')
-                    .then(function (res) { if (!res.ok) throw new Error('network'); return res.json(); })
-                    .then(function (data) {
-                        if (Array.isArray(data)) {
-                            try { localStorage.setItem('rating_suggestions', JSON.stringify(data)); } catch (e) { }
-                        }
-                    })
-                    .catch(function () { /* ignore fetch errors */ })
-                    .finally(function () { if (typeof cb === 'function') cb(); });
-            } catch (e) {
-                if (typeof cb === 'function') cb();
-            }
-        }
-        function saveExampleSuggestions(list) {
-            try { localStorage.setItem('rating_suggestions', JSON.stringify(list)); } catch (e) { console.warn('Konnte Vorschläge nicht speichern', e); }
-        }
-
-        function openExampleManager() {
-            if (document.getElementById('exampleManagerModal')) return;
-            const overlay = document.createElement('div');
-            overlay.className = 'popup-overlay';
-            overlay.id = 'exampleManagerModal';
-            overlay.style.display = 'flex';
-            overlay.innerHTML = `
-                <div class="popup-content" role="dialog" aria-modal="true">
-                    <button class="close-btn" id="examplesCloseBtn">&times;</button>
-                    <h2>Beispielbewertungen verwalten</h2>
-                    <p>Hier siehst du alle Beispielbewertungen. Du kannst neue hinzufügen oder bestehende löschen.</p>
-                    <div style="margin:10px 0;">
-                        <input id="examplesInput" type="text" placeholder="Neue Beispielbewertung hinzufügen" style="width:70%;padding:8px;border:1px solid #ccc;border-radius:4px;" />
-                        <button id="examplesAddBtn" class="btn small" style="margin-left:8px;">Hinzufügen</button>
-                    </div>
-                    <ul id="examplesList" class="manage-list" style="max-height:320px;overflow:auto;padding:0 6px;margin:6px 0 0 0;">
-                    </ul>
-                </div>
-            `;
-            document.body.appendChild(overlay);
-
-            const listEl = overlay.querySelector('#examplesList');
-            const inputEl = overlay.querySelector('#examplesInput');
-            const addBtn = overlay.querySelector('#examplesAddBtn');
-            const closeBtn = overlay.querySelector('#examplesCloseBtn');
-
-            function render() {
-                const items = getExampleSuggestions();
-                listEl.innerHTML = '';
-                if (!items || items.length === 0) {
-                    const p = document.createElement('p');
-                    p.className = 'survey-empty-text';
-                    p.textContent = 'Keine Beispielbewertungen vorhanden.';
-                    listEl.appendChild(p);
-                    return;
-                }
-                items.forEach((s, idx) => {
-                    const li = document.createElement('li');
-                    li.style.display = 'flex';
-                    li.style.justifyContent = 'space-between';
-                    li.style.alignItems = 'center';
-                    li.style.padding = '6px 8px';
-                    const span = document.createElement('span');
-                    span.textContent = s;
-                    const del = document.createElement('button');
-                    del.className = 'del-btn';
-                    del.textContent = 'Löschen';
-                    del.addEventListener('click', function () {
-                        const arr = getExampleSuggestions();
-                        arr.splice(idx, 1);
-                        saveExampleSuggestions(arr);
-                        render();
-                    });
-                    li.appendChild(span);
-                    li.appendChild(del);
-                    listEl.appendChild(li);
-                });
-            }
-
-            addBtn.addEventListener('click', function (e) {
-                e.preventDefault();
-                const v = inputEl.value.trim();
-                if (!v) return;
-                const arr = getExampleSuggestions();
-                arr.unshift(v);
-                saveExampleSuggestions(arr);
-                inputEl.value = '';
-                render();
-            });
-
-            inputEl.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); addBtn.click(); } });
-
-            closeBtn.addEventListener('click', function () { overlay.remove(); });
-
-            overlay.addEventListener('click', function (ev) { if (ev.target === overlay) overlay.remove(); });
-
-            ensureSuggestionsLoaded(function () {
-                render();
-            });
-        }
-
-        const topManageBtn = document.getElementById('manageBtn');
-        if (topManageBtn) topManageBtn.addEventListener('click', function (e) { e.preventDefault(); openExampleManager(); });
 
 
         function savePolls() {
