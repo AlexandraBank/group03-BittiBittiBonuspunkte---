@@ -16,13 +16,11 @@
 .questions-container h1 {
     font-size: 30px;
     margin-bottom: 10px;
-    text-align: center;
 
 }
 
 .p-desc {
     font-size: 15px;
-    text-align: center;
     margin-top: 0px;
     margin-bottom: 40px;
 }
@@ -38,6 +36,11 @@
     border-radius: 6px;
     padding: 10px;
     margin-bottom: 10px;
+}
+
+.question-card.answered {
+    background-color: #e6f7e6;
+    border-left: 6px solid #2ecc71;
 }
 
 .question-meta {
@@ -109,6 +112,15 @@
 .downvote:disabled {
     opacity: 0.4;
     cursor: not-allowed;
+}
+
+.dropdown-filter {
+  margin-bottom: 20px;
+  margin-left: 10px;
+  max-width: 300px;
+  padding: 2px;
+  border-radius: 3px;
+  border-color: #808080;
 }
 
 

@@ -21,6 +21,18 @@
         <h1>Eure Fragen</h1>
         <p class="p-desc"> Hier kannst du dem Dozenten eine Frage stellen.</p>
 
+
+        <div>
+                Filtern nach:
+            <select class="dropdown-filter" id="dropdown-filter">
+                <option value="Zu beantworten">Zu beantworten</option>
+                <option value="Schon beantwortet">Schon beantwortet</option>
+                <option value="Alle Fragen">Alle Fragen</option>
+            </select>
+        </div>
+
+        <div style="height:30px;"></div>
+
         <div class="questions-list" id="questionsList">
 
         </div>
@@ -52,6 +64,7 @@
     const listEl = document.getElementById('questionsList');
     const inputEl = document.getElementById('questionInput');
     const submitBtn = document.getElementById('submitQuestion');
+    const filterSelect = document.getElementById('dropdown-filter');
 
     function loadQuestions() {
         try {
@@ -70,6 +83,10 @@
         const card = document.createElement('div');
         card.className = 'question-card';
         card.dataset.id = q.id;
+
+        if(q.isAnswered){
+            card.classList.add('answered');
+        }
 
         const meta = document.createElement('p');
         meta.className = 'question-meta';
@@ -111,7 +128,7 @@
     }
 
     function render() {
-        const qs = loadQuestions();
+        let qs = loadQuestions();
         listEl.innerHTML = '';
         if (!qs || !qs.length) {
             const empty = document.createElement('p');
@@ -119,6 +136,17 @@
             listEl.appendChild(empty);
             return;
         }
+
+        const filter = filterSelect?.value;
+
+        if (filter === 'Zu beantworten') {
+            qs = qs.filter(q => !q.isAnswered);
+        } else if (filter === 'Schon beantwortet') {
+            qs = qs.filter(q => q.isAnswered);
+        } else if (filter === 'Alle Fragen') {
+            qs = qs;
+        }
+
         qs.sort((a,b) => (b.votes||0) - (a.votes||0) || (a.created||0) - (b.created||0));
         qs.forEach(q => listEl.appendChild(createCard(q)));
     }
@@ -197,6 +225,13 @@
         if (!e || !e.key) return;
         if (e.key === STORAGE_KEY) render();
     });
+
+    if (filterSelect) {
+        filterSelect.addEventListener('change', function () {
+            render();
+        });
+    }
+
     try {
         if (window.BroadcastChannel) {
             const bc = new BroadcastChannel('hci_questions');

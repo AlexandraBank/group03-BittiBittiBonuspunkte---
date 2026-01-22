@@ -10,7 +10,7 @@ body {
   left: 0;
   width: 100%;
   height: 60px;
-  background: #222;
+  background: #000000;
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -25,6 +25,6 @@ body {
 }
 
 .bottom-nav button.active {
-  color: #00ffcc;
-  border-top: 3px solid #00ffcc;
+  color: #91c6ff;
+  border-top: 3px solid #91c6ff;
 }
