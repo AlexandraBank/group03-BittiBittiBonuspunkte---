@@ -289,7 +289,8 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
         
         if (questions.length === 0) {
             const emptyMsg = document.createElement('p');
-            emptyMsg.style.fontSize = '16px';
+            emptyMsg.style.marginTop = '20px';
+            emptyMsg.className = 'survey-empty-text';
             emptyMsg.textContent = 'Keine Fragen vorhanden. Warten Sie darauf, dass ein Student eine Frage stellt.';
             questionsListEl.appendChild(emptyMsg);
             return;
