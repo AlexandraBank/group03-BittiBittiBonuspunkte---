@@ -6,6 +6,10 @@ body {
 	background-color: rgb(79, 99, 143);
 }
 
+body {
+	background-color: rgb(79, 99, 143);
+}
+
 #menu-boxes {
 	position: fixed;
 	top: 50%;
@@ -18,7 +22,7 @@ body {
 	min-width: 350px;
 	background: none;
 	box-shadow: none;
-	border-radius: 0;
+	border-radius: 5px;
 	padding: 0;
 }
 .menu-box {
@@ -28,6 +32,7 @@ body {
 	box-shadow: 0 1px 4px rgba(0,0,0,0.48);
 	background-color: #ffffff;
 	padding: 12px 0;
+	background-color: white;
 }
 .menu-box h3 {
 	margin: 0 0 15px 0;
@@ -62,4 +67,8 @@ body {
 .menu-box li a {
 	text-decoration: none; 
 	color: inherit; 
+}
+
+.no-margin-bottom {
+    margin-bottom: 0px;
 }
