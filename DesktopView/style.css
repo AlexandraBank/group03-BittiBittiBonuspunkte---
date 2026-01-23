@@ -135,7 +135,6 @@ html, body {
 .button {
     width:100%;
     height: 60px;
-    background-color: white;
     border-radius: 5px;
     margin-bottom: 10px;
 }
@@ -163,10 +162,17 @@ html, body {
     padding: 12px 14px;
     font-size: 16px;
     border-radius: 6px;
-    border-color:#b6b6b6;
+    border: 2px solid #b6b6b6;
+    background-color: #ffffff;
     box-shadow: 2px 2px 2px rgba(87, 87, 87, 0.274);
     box-sizing: border-box;
     cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.button.button--fill > button:hover {
+    background-color: #ffffff;
+    transform: translateY(-2px);
 }
 
 .button.no-margin {
