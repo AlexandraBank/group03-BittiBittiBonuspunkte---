@@ -1,5 +1,9 @@
 * {
-    font-family: "Plus Jakarta Sans", sans-serif;
+	font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+body {
+	background-color: rgb(79, 99, 143);
 }
 
 body {
@@ -26,6 +30,7 @@ body {
 	max-width: 100%;
 	border-radius: 8px;
 	box-shadow: 0 1px 4px rgba(0,0,0,0.48);
+	background-color: #ffffff;
 	padding: 12px 0;
 	background-color: white;
 }
