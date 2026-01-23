@@ -45,7 +45,7 @@ html, body {
     height: 50.5%;
     background-color: rgb(255, 255, 255);
     border-radius: 10px;
-    box-shadow: 0 0 22px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 0 22px rgba(71, 71, 71, 0.595);
 }
 
 .split{
