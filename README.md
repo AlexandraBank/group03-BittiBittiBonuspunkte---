@@ -6,4 +6,11 @@ Den MobileView haben wir mit einer BrowserExtension (https://www.webmobilefirst.
 
 Für MobileView bitte zuerst Wartescreen.html ausführen.
 
-Ggf. muss vorher der lokale Speicher der Website gelöscht werden, wenn manche Funktionen nicht funktionieren.
+-----
+
+WICHTIG: Wir haben für unseren Prototypen vollständig auf CouchDB als Datenbanklösung verzichtet. Stattdessen haben wir alle dynamischen Variablen im browsereigenen Local Storage gespeichert. Diesen kann man über die Developer Tools eines jeden Browsers einsehen, wenn man diesen genauer technisch untersuchen will.
+
+
+Ggf. muss vorher der localStorage der Website gelöscht werden, wenn es zu Bugs kommt.
+
+-----
