@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		fill.style.width = pct + '%';
 		const label = document.createElement('div');
 		label.className = 'poll-bar-label';
-		label.textContent = emoji + ' ' + count + ' (' + pct + '%)';
+		label.textContent = emoji + ' ' + count;
 		label.style.color = count > 0 ? '#fff' : '#000';
 		wrap.appendChild(fill);
 		wrap.appendChild(label);
@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			const total = yes + no + neutral;
 			let yesPct, noPct, neutralPct;
 			if (total === 0) {
-				yesPct = 33; neutralPct = 33; noPct = 34;
+				yesPct = 0; neutralPct = 0; noPct = 0;
 			} else {
 				yesPct = Math.round((yes / total) * 100);
 				neutralPct = Math.round((neutral / total) * 100);
