@@ -215,7 +215,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const poll = document.createElement("div");
         poll.className = "poll";
 
-    const percent = Math.floor(100 / survey.answers.length);
+    const percent = 0; // Start mit 0% für neue Umfragen
     const defaultColorClass = 'selected-blue';
 
         poll.innerHTML = `
@@ -227,7 +227,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     return `
                     <div class="poll-bar ${colorClass}">
                         <div class="poll-bar-fill" style="width:${percent}%"></div>
-                        <div class="poll-bar-label">${a} (${percent}%)</div>
+                        <div class="poll-bar-label" style="color:#000;">${a} (${percent}%)</div>
                     </div>
                 `
                 }).join("")}
@@ -363,6 +363,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const percent = totalVotes ? Math.round((ansVotes / totalVotes) * 100) : 0;
                 const baseText = labelElem.textContent.replace(/\s*\([^\)]*\)\s*$/, '').trim();
                 labelElem.textContent = `${baseText} (${percent}%)`;
+                labelElem.style.color = percent === 0 ? '#000' : '#fff';
             });
 
             const statsElem = poll.querySelector(".poll-stats");
