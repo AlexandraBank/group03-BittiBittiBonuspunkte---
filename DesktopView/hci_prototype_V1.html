@@ -124,7 +124,7 @@
                         <button id="openSurveyBtn">Umfrage erstellen</button>
                     </div>
 
-                    <div class="button button--fill">
+                    <div class="button button--fill no-margin">
                         <button id="openSessionBtn">Session starten</button>
                     </div>
                 </div>
@@ -165,7 +165,10 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
     if (exitBtn) {
         exitBtn.addEventListener('click', function (e) {
             e.preventDefault();
-            try { window.location.href = 'mainDisplay.html'; } catch (err) { console.warn('Could not navigate to mainDisplay', err); }
+            try { 
+                localStorage.setItem('sessionStarted', 'false');
+                window.location.href = 'mainDisplay.html'; 
+            } catch (err) { console.warn('Could not navigate to mainDisplay', err); }
         });
     }
 
@@ -283,6 +286,16 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
         }
 
         questionsListEl.innerHTML = '';
+        
+        if (questions.length === 0) {
+            const emptyMsg = document.createElement('p');
+            emptyMsg.style.marginTop = '20px';
+            emptyMsg.className = 'survey-empty-text';
+            emptyMsg.textContent = 'Keine Fragen vorhanden. Warten Sie darauf, dass ein Student eine Frage stellt.';
+            questionsListEl.appendChild(emptyMsg);
+            return;
+        }
+        
         questions.sort((a,b) => (b.votes||0) - (a.votes||0) || (a.created||0) - (b.created||0));
         questions.forEach(q => questionsListEl.appendChild(createCardElement(q)));
     }
