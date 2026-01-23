@@ -1,3 +1,7 @@
+body {
+    background-color: rgb(79, 99, 143);
+}
+
 .questions-container {
     width: 90%;              
     max-width: 600px;       
@@ -122,5 +126,6 @@
   border-radius: 3px;
   border-color: #808080;
 }
+
 
 
