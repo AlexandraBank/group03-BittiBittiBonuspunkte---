@@ -113,7 +113,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 } else {
                     btn.addEventListener('click', () => {
                         recordVote(survey.id, index);
-                        // immediate visual feedback with unified blue color
                         btn.classList.add(selectedClass, 'voted');
                         btn.disabled = true;
                         setTimeout(() => render(), 150);
