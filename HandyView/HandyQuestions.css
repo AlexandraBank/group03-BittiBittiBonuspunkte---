@@ -35,10 +35,11 @@ body {
 }
 
 .question-card {
-    background-color: #e6e6e6;
+    background-color: #fff;
     border-radius: 6px;
-    padding: 10px;
-    margin-bottom: 10px;
+    border: 1px solid #e6e6e6;
+    padding: 12px;
+    margin-bottom: 12px;
 }
 
 .question-card.answered {
@@ -53,27 +54,30 @@ body {
 }
 
 .question-text {
-    font-size: 16px;
+    font-size: 16.5px;
     font-weight: bold;
     margin-top: 5px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .question-actions {
     display: flex;
+    justify-content: flex-start;
+    align-items: center;
     gap: 8px;
 }
 
 .question-actions button {
-    background-color: white;
-    border: none;
+    background-color: #f0f0f0;
+    border: 0px solid #cfcfcf;
     border-radius: 4px;
     padding: 4px 8px;
     cursor: pointer;
+    color: #333;
 }
 
 .question-actions button:hover {
-    background-color: #d2d2d2;
+    background-color: #e0e0e0;
 }
 
 .question-input-area {
