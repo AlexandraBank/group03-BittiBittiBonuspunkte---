@@ -286,6 +286,15 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
         }
 
         questionsListEl.innerHTML = '';
+        
+        if (questions.length === 0) {
+            const emptyMsg = document.createElement('p');
+            emptyMsg.style.fontSize = '16px';
+            emptyMsg.textContent = 'Keine Fragen vorhanden. Warten Sie darauf, dass ein Student eine Frage stellt.';
+            questionsListEl.appendChild(emptyMsg);
+            return;
+        }
+        
         questions.sort((a,b) => (b.votes||0) - (a.votes||0) || (a.created||0) - (b.created||0));
         questions.forEach(q => questionsListEl.appendChild(createCardElement(q)));
     }
