@@ -52,6 +52,7 @@ body {
 	padding-left: 10px;
 	color: #333;
 	border-bottom: 1px solid #eee;
+	cursor: pointer;
 }
 .menu-box li:last-child {
 	border-bottom: none;
