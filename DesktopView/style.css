@@ -159,6 +159,9 @@ html, body {
     cursor: pointer;
 }
 
+.button.no-margin {
+    margin-bottom: 0;
+}
 
 
 .members .participant {
@@ -347,6 +350,7 @@ button:disabled {
 
 .nav-box > div:last-child {
     margin-top: auto;
+    margin-bottom: 8px;
 }
 
 

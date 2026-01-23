@@ -124,7 +124,7 @@
                         <button id="openSurveyBtn">Umfrage erstellen</button>
                     </div>
 
-                    <div class="button button--fill">
+                    <div class="button button--fill no-margin">
                         <button id="openSessionBtn">Session starten</button>
                     </div>
                 </div>
@@ -165,7 +165,10 @@ const VOTE_KEY = 'hci_votes_v1_' + window.USER_TYPE;
     if (exitBtn) {
         exitBtn.addEventListener('click', function (e) {
             e.preventDefault();
-            try { window.location.href = 'mainDisplay.html'; } catch (err) { console.warn('Could not navigate to mainDisplay', err); }
+            try { 
+                localStorage.setItem('sessionStarted', 'false');
+                window.location.href = 'mainDisplay.html'; 
+            } catch (err) { console.warn('Could not navigate to mainDisplay', err); }
         });
     }
 
