@@ -1,5 +1,9 @@
+body {
+    background-color: rgb(79, 99, 143);
+}
+
 .questions-container {
-    width: 90%;              
+    width: 83%;              
     max-width: 600px;       
     height: 80vh;          
     margin: 20px auto;
@@ -16,7 +20,6 @@
 .questions-container h1 {
     font-size: 30px;
     margin-bottom: 10px;
-
 }
 
 .p-desc {
